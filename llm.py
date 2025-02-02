@@ -41,7 +41,6 @@ def openai_req_generator(system_prompt, user_prompt, json_output=False, temperat
         )
     return chat_completion.choices[0].message.content
 
-
 def extract_flight_info(user_query):
     # Read the system prompt from file
     with open('prompts/extract_info.md', 'r', encoding='utf-8') as file:
@@ -60,9 +59,7 @@ def extract_flight_info(user_query):
         file.write(f"### Flight Information Extracted\n```json\n{response}\n```")
     
     return response
-
-
-        
+       
 def crawl_flight_data(flight_info):
     # Convert the JSON string to a dictionary if it's a string
     if isinstance(flight_info, str):
@@ -128,36 +125,58 @@ def extract_flight_listings(html_content):
     try:
         soup = BeautifulSoup(html_content, 'html.parser')
         
-        # Find all flight listing elements (you'll need to adjust these selectors based on the actual HTML structure)
-        flight_elements = soup.find_all('div', class_='flight-listing')  # Update this selector
+        # Find all flight listing elements using the specific class
+        flight_elements = soup.find_all('div', class_='itinerary_wrapper__NZYJF')
         
         # Extract relevant information from each flight
         filtered_flights = []
         for flight in flight_elements:
             try:
+                # Extract airline info
+                airline_name = flight.find('p', class_='route-airline-name_airlineName__UMWN5')
+                flight_number = flight.find('p', class_='route-airline-name_flightNo__HJ2Iq')
+                
+                # Extract times
+                time_elements = flight.find_all('div', class_='route-two-line-part_routeTwoLineTopPart__JWDky')
+                departure_time = time_elements[0].get_text().strip() if len(time_elements) > 0 else None
+                arrival_time = time_elements[1].get_text().strip() if len(time_elements) > 1 else None
+                
+                # Extract cities
+                city_elements = flight.find_all('div', class_='route-two-line-part_routeTwoLineBottomPart__XD5_T')
+                departure_city = city_elements[0].get_text().strip() if len(city_elements) > 0 else None
+                arrival_city = city_elements[1].get_text().strip() if len(city_elements) > 1 else None
+                
+                # Extract duration
+                duration = flight.find('span', class_='route-image_durationTime__vPpj0')
+                
+                # Extract price
+                price_element = flight.find('div', class_='itinerary_price__mBl5A')
+                
+                # Extract remaining seats
+                remaining_seats = flight.find('span', class_='mx-1 text-xs text-green-secondary text-nowrap')
+                
                 flight_info = {
-                    'airline': flight.find('div', class_='airline-name').text.strip(),  # Update selectors
-                    'departure_time': flight.find('div', class_='departure-time').text.strip(),
-                    'arrival_time': flight.find('div', class_='arrival-time').text.strip(),
-                    'price': flight.find('div', class_='price').text.strip(),
-                    # Add other relevant fields
+                    'airline': airline_name.text.strip() if airline_name else None,
+                    'flight_number': flight_number.text.strip() if flight_number else None,
+                    'departure_time': departure_time,
+                    'departure_city': departure_city,
+                    'arrival_time': arrival_time,
+                    'arrival_city': arrival_city,
+                    'duration': duration.text.strip() if duration else None,
+                    'price': price_element.text.strip() if price_element else None,
+                    'remaining_seats': remaining_seats.text.strip() if remaining_seats else None
                 }
                 filtered_flights.append(flight_info)
-            except AttributeError:
+            except AttributeError as e:
+                print(f"Error processing flight element: {str(e)}")
                 continue
         
         # Convert to a formatted string for LLM input
-        flights_text = "Available Flights:\n"
-        for idx, flight in enumerate(filtered_flights, 1):
-            flights_text += f"\nFlight {idx}:\n"
-            for key, value in flight.items():
-                flights_text += f"{key}: {value}\n"
+        # Save directly as JSON
+        with open('extracted_flights.json', 'w', encoding='utf-8') as f:
+            json.dump(filtered_flights, f, ensure_ascii=False, indent=2)
+        flights_text = json.dumps(filtered_flights, ensure_ascii=False, indent=2)
         
-        # Save the extracted flight information to a file
-        with open('extracted_flights.md', 'w', encoding='utf-8') as f:
-            f.write("### Extracted Flight Information\n\n")
-            f.write(flights_text)
-            
         return flights_text
     
     except Exception as e:
@@ -214,19 +233,17 @@ def process_input_file():
         # print('Webpage Crawled')
 
         # For debugging, read the saved HTML content
-        with open('flight_info_output.json', 'r', encoding='utf-8') as f:
+        with open('flight_search_results.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
         print('HTML content loaded for debugging')
         
         # Extract relevant flight information
         flights_text = extract_flight_listings(html_content)
-        if flights_text:
-            print('Flight Information Extracted')
-            
-            # Analyze flights using LLM
-            analysis = analyze_flights(flights_text)
-            print('Flight Analysis Complete')
-            return analysis
+        print('Flight Information Extracted')   
+        # Analyze flights using LLM
+        # analysis = analyze_flights(flights_text)
+        # print('Flight Analysis Complete')
+        # return analysis
         
     except Exception as e:
         print(f"Error processing input: {str(e)}")
