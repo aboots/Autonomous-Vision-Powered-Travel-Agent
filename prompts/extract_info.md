@@ -13,22 +13,35 @@
 {
     "source_airport": "",
     "destination_airport": "",
-    "start_date": "",
-    "return_date": "",
+    "start_date": year-month-day ,
+    "return_date": year-month-day,
     "number_of_passengers": int,
     "other_data": {key: value,...}
 }
 
-### مثال درخواست کاربر:
-"می‌خوام برای خودم و همسرم از تهران به استانبول برای تاریخ ۱۵ مرداد برم و ۲۵ مرداد برگردم"
+### 1 مثال درخواست کاربر:
+"می‌خوام برای خودم و همسرم از تهران به استانبول برای تاریخ ۱۵ مرداد برم و ۲۵ مرداد برگردم. همچنین می‌خواهم که پروازمان بیزنس باشد."
 
-### پاسخ نمونه:
+### 1 پاسخ نمونه:
 {
-    "source_airport": "IKA",
-    "destination_airport": "LON",
-    "start_date": "1403-05-15",
-    "return_date": "1403-05-25",
+    "source_airport": "thr",
+    "destination_airport": "ist",
+    "start_date": "2025-08-05",
+    "return_date": "2025-08-15",
     "number_of_passengers": 2,
+    "other_data": {class: "business"}
+}
+
+### 2 مثال درخواست کاربر:
+سلام. من به همراه همسر و دو فرزندم می‌خواهیم برای سفر به پاریس برویم. برای تعطیلات عید و می‌خواهیم قبل 12 فرودین ام برگردیم. چه پرواز‌های موجود است؟
+
+### 2 پاسخ نمونه:
+{
+    "source_airport": "thr",
+    "destination_airport": "par",
+    "start_date": "2025-03-15",
+    "return_date": "2025-04-01",
+    "number_of_passengers": 4,
     "other_data": {}
 }
 
