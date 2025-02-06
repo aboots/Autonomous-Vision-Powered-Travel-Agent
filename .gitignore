@@ -29,3 +29,5 @@ archive.zip
 
 # macOS
 .DS_Store
+selenium_test.py
+excel_test.py

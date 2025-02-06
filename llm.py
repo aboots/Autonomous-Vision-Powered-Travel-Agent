@@ -12,6 +12,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+import pandas as pd
 
 load_dotenv()
 
@@ -215,6 +216,86 @@ def analyze_flights(flights_text):
     
     return response
 
+def analyze_flights_table(flights_text):
+    """Format flight information in a readable table format"""
+    # Read the system prompt from file
+    with open('prompts/format_table.md', 'r', encoding='utf-8') as file:
+        system_prompt = file.read()
+    
+    # Get formatted table from LLM
+    response = openai_req_generator(
+        system_prompt=system_prompt,
+        user_prompt=flights_text,
+        json_output=False,  # We want markdown table output
+        temperature=0.1
+    )
+    
+    # Write output to file
+    with open('all_flights_table.md', 'w', encoding='utf-8') as file:
+        file.write("# Available Flights\n\n")
+        file.write(response)
+    
+    return response
+
+def interactive_flight_filter():
+    """Handle interactive conversation with user for flight filtering"""
+    # Load the flights data
+    with open('extracted_flights.json', 'r', encoding='utf-8') as f:
+        flights_data = f.read()
+    
+    # Read the system prompt for interactive filtering
+    with open('prompts/interactive_filter.md', 'r', encoding='utf-8') as file:
+        system_prompt = file.read()
+    
+    print("\nWelcome to the flight filtering system!")
+    print("You can ask questions like:")
+    print("- Show me flights under $500")
+    print("- Which morning flights are available?")
+    print("- I prefer direct flights with Emirates")
+    print("Type 'exit' to end the conversation.\n")
+    
+    query_count = 1
+    while True:
+        user_input = input("\nWhat would you like to know about the flights? ")
+        
+        if user_input.lower() == 'exit':
+            break
+        
+        # Combine flights data with user query
+        combined_prompt = f"Available flights data:\n{flights_data}\n\nUser query: {user_input}"
+        
+        # Get filtered results from LLM
+        response = openai_req_generator(
+            system_prompt=system_prompt,
+            user_prompt=combined_prompt,
+            json_output=True,  # Changed to True to get JSON response
+            temperature=0.1
+        )
+        
+        # Convert response to DataFrame and save to Excel
+        if isinstance(response, str):
+            filtered_flights = json.loads(response)
+        else:
+            filtered_flights = response
+            
+        if filtered_flights and len(filtered_flights) > 0:
+            flights_data = filtered_flights["flights"]
+
+            # Create DataFrame directly from the list of flight dictionaries
+            df = pd.DataFrame.from_records(flights_data)
+            excel_filename = f'filtered_flights_query_{query_count}.xlsx'
+            df.to_excel(excel_filename, index=False)
+            print(f"\nFiltered flights have been saved to {excel_filename}")
+            
+            # Also display the results in a nice format
+            with open(f'output_filtered.md', 'w', encoding='utf-8') as file:
+                file.write("# Available Flights\n\n")
+                file.write(response)
+        else:
+            print("\nNo flights found matching your criteria.")
+        
+        query_count += 1
+
 def process_input_file():
     try:
         # Read the input query from file
@@ -233,17 +314,20 @@ def process_input_file():
         # print('Webpage Crawled')
 
         # For debugging, read the saved HTML content
-        with open('flight_search_results.html', 'r', encoding='utf-8') as f:
-            html_content = f.read()
-        print('HTML content loaded for debugging')
+        # with open('flight_search_results.html', 'r', encoding='utf-8') as f:
+        #     html_content = f.read()
+        # print('HTML content loaded for debugging')
         
-        # Extract relevant flight information
-        flights_text = extract_flight_listings(html_content)
-        print('Flight Information Extracted')   
-        # Analyze flights using LLM
-        # analysis = analyze_flights(flights_text)
-        # print('Flight Analysis Complete')
-        # return analysis
+        # # Extract relevant flight information
+        # flights_text = extract_flight_listings(html_content)
+        # print('Flight Information Extracted')
+        
+        # # Format and display flights in table format
+        # table_output = analyze_flights_table(flights_text)
+        # print('Flight Table Generated')
+        
+        # Start interactive filtering session
+        interactive_flight_filter()
         
     except Exception as e:
         print(f"Error processing input: {str(e)}")
