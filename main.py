@@ -1,6 +1,6 @@
 from modules.flight_extractor import extract_flight_info
 from modules.flight_augmentor import augment_search_options
-from modules.flight_crawler import crawl_flight_data_skyscanner
+from modules.flight_crawler import crawl_flight_data_kayak
 from modules.flight_analyzer import (
     extract_flight_listings_manually,
     create_flights_table
@@ -26,7 +26,7 @@ def main():
         augmented_searches = [augmented_searches[0]]
         # Step 3: Crawl flight data for each search option
         for search in augmented_searches:
-            html_content = crawl_flight_data_skyscanner(search)
+            html_content = crawl_flight_data_kayak(search)
             
             # Step 4: Extract and analyze flight information
             # if html_content:
