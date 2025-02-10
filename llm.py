@@ -87,12 +87,12 @@ def crawl_flight_data(flight_info):
         # Initialize the driver
         driver = webdriver.Chrome(options=chrome_options)
 
-        # homedir = os.path.expanduser("~")
-        # chrome_options.binary_location = f"{homedir}/chrome-linux64/chrome"
-        # webdriver_service = Service(f"{homedir}/chromedriver-linux64/chromedriver")
+        homedir = os.path.expanduser("~")
+        chrome_options.binary_location = f"{homedir}/chrome-linux64/chrome"
+        webdriver_service = Service(f"{homedir}/chromedriver-linux64/chromedriver")
 
-        # # Choose Chrome Browser
-        # browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+        # Choose Chrome Browser
+        browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
         
         # Construct and visit the URL
         final_url = requests.Request('GET', base_url, params=params).prepare().url
