@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import json
 from pydantic import BaseModel
 from typing import List  # Add this import at the top
+import base64
 
 
 load_dotenv()
@@ -41,28 +42,61 @@ def openai_req_list_flights(system_prompt, user_prompt, temperature=0.1):
         output_json.append(flight.model_dump())
     return output_json
 
-def openai_req_generator(system_prompt, user_prompt, json_output=False, temperature=0.1):
+def openai_req_generator(system_prompt, user_prompt, files=None, json_output=False, temperature=0.1):
+    model_name = "gpt-4o"
+    
+    messages = [
+        {"role": "system", "content": system_prompt},
+    ]
+    
+    if files:
+        content_parts = []
+        for file_path in files:
+            # Upload the file to the GPT API and obtain the file_id
+            with open(file_path, 'rb') as file:
+                file_data = file.read()
+                file_id, file_obj = upload_file_to_gpt_api(file_data)
+                print(f'file id {file_id}')
+            
+            content_parts.append({
+                "type": "image_url",
+                "file": {
+                    "file_id": file_id
+                }
+            })
+
+        messages.append({"role": "user", "content": content_parts})
+    else:
+        messages.append({"role": "user", "content": user_prompt})
+
     if json_output:
         response_format = {"type": "json_object"}
         chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            model="gpt-4o-mini",
+            messages=messages,
+            model=model_name,
             response_format=response_format,
             temperature=temperature,
+            max_tokens=4096,
         )
     else:
         chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            model="gpt-4o-mini",
+            messages=messages,
+            model=model_name,
             temperature=temperature,
+            max_tokens=4096,
         )
     return chat_completion.choices[0].message.content
+
+def upload_file_to_gpt_api(file_data):
+    # OpenAI's file upload endpoint expects a file object and a purpose
+    response = client.files.create(
+        file=file_data,
+        purpose='assistants'  # Set the purpose according to your use case
+    )
+    print("uploaded file")
+    # Access id as an attribute instead of dictionary key
+    return response.id, response
+
 
 def save_output(data, filename, output_type=None):
     """

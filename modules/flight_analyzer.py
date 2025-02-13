@@ -1,6 +1,82 @@
 from bs4 import BeautifulSoup
 import json
 from .utils import openai_req_generator, save_output
+import os
+
+import os
+
+def load_prompt(prompt_name):
+    """Load prompt from prompts directory"""
+    prompt_path = os.path.join('prompts', f'{prompt_name}.md')
+    with open(prompt_path, 'r', encoding='utf-8') as file:
+        return file.read()
+    
+def extract_flights_listings_llm_v2(iamge_url):
+    prompt = load_prompt('extract_flights2')
+    response = openai_req_generator(
+        system_prompt=prompt,
+        user_prompt="Please analyze the Image file containing flight listings.",
+        files=[iamge_url],
+        json_output=False,
+        temperature=0.1
+    )
+    
+    # Save formatted table
+    save_output(
+        response,
+        'all_crawledflights.md',
+    )
+    
+    return response
+
+
+def extract_flights_listings_llm(html_content):
+    """
+    Extract flight information from HTML content using the specified prompt
+    Returns the filtered flight listings
+    """
+    # try:
+    # Parse HTML and extract just the flight results wrapper content
+    soup = BeautifulSoup(html_content, 'html.parser')
+    flight_results = soup.find('div', id='flight-results-list-wrapper')
+    # body_content = soup.body
+    
+    if not flight_results:
+        print("No flight results content found in HTML")
+        return None
+        
+    # Convert flight results content to string
+    flights_html = str(flight_results)
+    print(len(flights_html))
+    
+    #save the content in debug html
+    temp_html_path = 'debug_html.html'
+    with open(temp_html_path, 'w', encoding='utf-8') as file:
+        file.write(flights_html)
+    
+    # Load the extraction prompt
+    prompt = load_prompt('extract_flights')
+    
+    # Send HTML file along with prompt to LLM
+    response = openai_req_generator(
+        system_prompt=prompt,
+        user_prompt="Please analyze the HTML file containing flight listings.",
+        files=[temp_html_path],
+        json_output=False,
+        temperature=0.1
+    )
+    
+    # Save formatted table
+    save_output(
+        response,
+        'all_crawledflights.md',
+    )
+    
+    return response
+        
+    # except Exception as e:
+    #     print(f"Error preprocessing HTML content: {str(e)}")
+    #     return None
 
 def extract_flight_listings_manually(html_content):
     try:

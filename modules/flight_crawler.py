@@ -11,7 +11,7 @@ from .utils import save_output
 from selenium.webdriver.chrome.service import Service
 import os
 
-def crawl_flight_data_kayak(flight_info):
+def crawl_flight_data_kayak(flight_info, i):
     base_url = "https://www.skyscanner.com/transport/flights/"
     params = {
         "adults": str(flight_info['number_of_passengers']),
@@ -84,7 +84,8 @@ def crawl_flight_data_kayak(flight_info):
         if page_content:
             save_output(
                 page_content,
-                'skyscanner_results.html',
+                f'skyscanner_results_{i}.html',
+                output_type='crawled_data'
             )
              
         driver.quit()
@@ -93,7 +94,6 @@ def crawl_flight_data_kayak(flight_info):
     except Exception as e:
         print(f"Error crawling Skyscanner: {str(e)}")
         return None
-
 
 def crawl_flight_data_skyscanner(flight_info):
     base_url = "https://www.skyscanner.com/transport/flights/"
