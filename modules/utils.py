@@ -91,7 +91,6 @@ def upload_file_to_gpt_api(file_data):
     # Access id as an attribute instead of dictionary key
     return response.id, response
 
-
 def save_output(data, filename, output_type=None):
     """
     Save output data to the appropriate folder

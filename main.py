@@ -41,7 +41,7 @@ def main():
         # analysis = analyze_flights(flights_text)
         # table_output = analyze_flights_table(flights_text)
     
-    flights_data = extract_flights_listings_llm_v2('flights2.png')
+    flights_data = extract_flights_listings_llm_v2('kayak_results_0.png')
 
     # # Step 5: Interactive filtering
     # interactive_flight_filter()

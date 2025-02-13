@@ -1,33 +1,144 @@
 {
-    "flights": [{
-            "airline": "Air Canada",
-            "departure_time": "1:30 am",
-            "arrival_time": "8:20 am",
-            "price": "$884",
-            "stops": "nonstop",
-            "duration": "14h 50m",
-            "departure_airport": "DXB",
-            "arrival_airport": "YYZ"
-        },
-        {
-            "airline": "Egyptair",
-            "departure_time": "4:20 pm",
-            "arrival_time": "7:00 am",
-            "price": "$548",
-            "stops": "1 stop, CAI",
-            "duration": "22h 40m",
-            "departure_airport": "DXB",
-            "arrival_airport": "YYZ"
-        },
-        {
-            "airline": "Emirates",
-            "departure_time": "3:30 am",
-            "arrival_time": "9:30 am",
-            "price": "$1,141",
-            "stops": "nonstop",
-            "duration": "14h 00m",
-            "departure_airport": "DXB",
-            "arrival_airport": "YYZ"
-        }
-    ]
+  "flights": [
+    {
+      "airline": "Egyptair",
+      "departure_time": "12:30 pm",
+      "arrival_time": "7:00 am",
+      "price": "$546",
+      "stops": "CAI",
+      "duration": "19h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Egyptair",
+      "departure_time": "12:30 pm",
+      "arrival_time": "7:00 am",
+      "price": "$476",
+      "stops": "CAI",
+      "duration": "19h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Cathay Pacific",
+      "departure_time": "1:30 am",
+      "arrival_time": "1:55 pm",
+      "price": "$884",
+      "stops": "HKG",
+      "duration": "21h 25m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Egyptair",
+      "departure_time": "2:30 pm",
+      "arrival_time": "7:50 am",
+      "price": "$477",
+      "stops": "CAI",
+      "duration": "19h 20m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Emirates",
+      "departure_time": "3:30 pm",
+      "arrival_time": "9:30 pm",
+      "price": "$1,141",
+      "stops": "DXB",
+      "duration": "19h 00m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Egyptair",
+      "departure_time": "12:30 pm",
+      "arrival_time": "7:00 am",
+      "price": "$476",
+      "stops": "CAI",
+      "duration": "19h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Air France",
+      "departure_time": "1:00 am",
+      "arrival_time": "2:25 pm",
+      "price": "$751",
+      "stops": "CDG",
+      "duration": "20h 25m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Qatar Airways",
+      "departure_time": "3:00 am",
+      "arrival_time": "3:25 pm",
+      "price": "$716",
+      "stops": "DOH",
+      "duration": "20h 25m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines",
+      "departure_time": "2:00 am",
+      "arrival_time": "3:30 pm",
+      "price": "$797",
+      "stops": "IST",
+      "duration": "20h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines",
+      "departure_time": "2:00 am",
+      "arrival_time": "3:30 pm",
+      "price": "$800",
+      "stops": "IST",
+      "duration": "20h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Egyptair",
+      "departure_time": "12:30 pm",
+      "arrival_time": "7:00 am",
+      "price": "$686",
+      "stops": "CAI",
+      "duration": "19h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Delta",
+      "departure_time": "1:00 am",
+      "arrival_time": "3:55 pm",
+      "price": "$751",
+      "stops": "AMS",
+      "duration": "23h 55m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "KLM",
+      "departure_time": "1:55 am",
+      "arrival_time": "9:40 pm",
+      "price": "$752",
+      "stops": "AMS",
+      "duration": "29h 45m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Egyptair",
+      "departure_time": "12:30 pm",
+      "arrival_time": "7:00 am",
+      "price": "$686",
+      "stops": "CAI",
+      "duration": "19h 30m",
+      "departure_airport": "DXB",
+      "arrival_airport": "YYZ"
+    }
+  ]
 }

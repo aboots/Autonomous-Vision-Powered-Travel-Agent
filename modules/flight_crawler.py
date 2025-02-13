@@ -87,12 +87,21 @@ def crawl_flight_data_kayak(flight_info, i):
                 f'skyscanner_results_{i}.html',
                 output_type='crawled_data'
             )
+
+        total_height = driver.execute_script("return document.body.scrollHeight")
+        
+        # Set window size to capture everything
+        driver.set_window_size(1920, total_height)
+
+        # Take screenshot instead of page source
+        screenshot = driver.save_screenshot(f'kayak_results_{i}.png')
+        print("Screenshot captured")
              
         driver.quit()
-        return page_content
+        return screenshot
         
     except Exception as e:
-        print(f"Error crawling Skyscanner: {str(e)}")
+        print(f"Error crawling Kayak: {str(e)}")
         return None
 
 def crawl_flight_data_skyscanner(flight_info):
