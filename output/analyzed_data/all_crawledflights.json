@@ -1,0 +1,33 @@
+{
+    "flights": [{
+            "airline": "Air Canada",
+            "departure_time": "1:30 am",
+            "arrival_time": "8:20 am",
+            "price": "$884",
+            "stops": "nonstop",
+            "duration": "14h 50m",
+            "departure_airport": "DXB",
+            "arrival_airport": "YYZ"
+        },
+        {
+            "airline": "Egyptair",
+            "departure_time": "4:20 pm",
+            "arrival_time": "7:00 am",
+            "price": "$548",
+            "stops": "1 stop, CAI",
+            "duration": "22h 40m",
+            "departure_airport": "DXB",
+            "arrival_airport": "YYZ"
+        },
+        {
+            "airline": "Emirates",
+            "departure_time": "3:30 am",
+            "arrival_time": "9:30 am",
+            "price": "$1,141",
+            "stops": "nonstop",
+            "duration": "14h 00m",
+            "departure_airport": "DXB",
+            "arrival_airport": "YYZ"
+        }
+    ]
+}

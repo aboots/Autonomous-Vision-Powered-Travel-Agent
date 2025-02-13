@@ -11,20 +11,26 @@ def load_prompt(prompt_name):
     with open(prompt_path, 'r', encoding='utf-8') as file:
         return file.read()
     
-def extract_flights_listings_llm_v2(iamge_url):
+def extract_flights_listings_llm_v2(image_url):
     prompt = load_prompt('extract_flights2')
     response = openai_req_generator(
         system_prompt=prompt,
         user_prompt="Please analyze the Image file containing flight listings.",
-        files=[iamge_url],
-        json_output=False,
+        files=[image_url],
+        json_output=True,
+        model_name="gpt-4o",
         temperature=0.1
     )
     
-    # Save formatted table
+    # Convert response to proper format if needed
+    if isinstance(response, str):
+        response = json.loads(response)
+    
+    # Save formatted output
     save_output(
         response,
-        'all_crawledflights.md',
+        'all_crawledflights.json',
+        'analyzed_data'
     )
     
     return response

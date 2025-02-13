@@ -42,9 +42,11 @@ def openai_req_list_flights(system_prompt, user_prompt, temperature=0.1):
         output_json.append(flight.model_dump())
     return output_json
 
-def openai_req_generator(system_prompt, user_prompt, files=None, json_output=False, temperature=0.1):
-    model_name = "gpt-4o"
-    
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+def openai_req_generator(system_prompt, user_prompt, files=None, json_output=False, temperature=0.1, model_name="gpt-4o-mini"):
     messages = [
         {"role": "system", "content": system_prompt},
     ]
@@ -52,19 +54,11 @@ def openai_req_generator(system_prompt, user_prompt, files=None, json_output=Fal
     if files:
         content_parts = []
         for file_path in files:
-            # Upload the file to the GPT API and obtain the file_id
-            with open(file_path, 'rb') as file:
-                file_data = file.read()
-                file_id, file_obj = upload_file_to_gpt_api(file_data)
-                print(f'file id {file_id}')
-            
+            base64_image = encode_image(file_path)
             content_parts.append({
                 "type": "image_url",
-                "file": {
-                    "file_id": file_id
-                }
+                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
             })
-
         messages.append({"role": "user", "content": content_parts})
     else:
         messages.append({"role": "user", "content": user_prompt})
