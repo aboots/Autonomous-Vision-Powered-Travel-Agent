@@ -10,6 +10,8 @@ import time
 from .utils import save_output
 from selenium.webdriver.chrome.service import Service
 import os
+from PIL import Image
+import io
 
 def crawl_flight_data_kayak(flight_info, i):
     base_url = "https://www.skyscanner.com/transport/flights/"
@@ -76,7 +78,7 @@ def crawl_flight_data_kayak(flight_info, i):
             print("Cookie consent button not found or not clickable")
         
         print("Waiting for page to load...")
-        time.sleep(30)
+        time.sleep(25)
         
         page_content = driver.page_source
         print("Page content captured")
@@ -89,16 +91,33 @@ def crawl_flight_data_kayak(flight_info, i):
             )
 
         total_height = driver.execute_script("return document.body.scrollHeight")
-        
-        # Set window size to capture everything
-        driver.set_window_size(1920, total_height)
 
-        # Take screenshot instead of page source
-        screenshot = driver.save_screenshot(f'kayak_results_{i}.png')
-        print("Screenshot captured")
+        # Additional step: Save sections of the page
+        # This will create multiple screenshots of smaller sections for better detail
+        section_height = int(total_height / 4)  # height of each section
+        for j in range(0, total_height, section_height):
+            driver.execute_script(f"window.scrollTo(0, {j})")
+            time.sleep(1)  # Allow time for any lazy-loaded content
+            driver.save_screenshot(f'kayak_results_{i}_section_{j//section_height}.png')
+        
+        # Set a higher resolution and DPI for better quality
+        driver.set_window_size(1920, total_height)  # Increased from 1920 to 2560 width
+        
+        # Convert screenshot to PIL Image for processing
+        img_binary = driver.get_screenshot_as_png()
+        img = Image.open(io.BytesIO(img_binary))
+        
+        # Enhance image quality
+        img = img.convert('RGB')
+        img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
+        
+        # Save with maximum quality
+        img.save(f'kayak_results_{i}.png', 'PNG', quality=100, optimize=False)
+            
+        print("Screenshots captured")
              
         driver.quit()
-        return screenshot
+        return f'kayak_results_{i}.png'
         
     except Exception as e:
         print(f"Error crawling Kayak: {str(e)}")
