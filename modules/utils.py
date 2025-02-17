@@ -57,7 +57,8 @@ def openai_req_generator(system_prompt, user_prompt, files=None, json_output=Fal
             base64_image = encode_image(file_path)
             content_parts.append({
                 "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                "detail": "high"
             })
         messages.append({"role": "user", "content": content_parts})
     else:

@@ -58,7 +58,7 @@ def crawl_flight_data_kayak(flight_info, i):
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         final_url = requests.Request('GET', url, params=params).prepare().url
-        final_url = "https://www.kayak.com/flights/DXB,nearby-YTO,nearby/2025-03-28/3adults"
+        final_url = "https://www.kayak.com/flights/DXB,nearby-YTO,nearby/2025-03-28/3adults?sort=bestflight_a"
         print(f"Skyscanner URL: {final_url}")
         driver.get(final_url)
         
@@ -80,47 +80,48 @@ def crawl_flight_data_kayak(flight_info, i):
         print("Waiting for page to load...")
         time.sleep(25)
         
-        page_content = driver.page_source
-        print("Page content captured")
+        # Set a reasonable window size - wider but not too tall
+        driver.set_window_size(1920, 1200)  # Good width for detail, reasonable height
         
-        if page_content:
-            save_output(
-                page_content,
-                f'skyscanner_results_{i}.html',
-                output_type='crawled_data'
-            )
-
+        # Get total page height
         total_height = driver.execute_script("return document.body.scrollHeight")
-
-        # Additional step: Save sections of the page
-        # This will create multiple screenshots of smaller sections for better detail
-        section_height = int(total_height / 4)  # height of each section
-        for j in range(0, total_height, section_height):
-            driver.execute_script(f"window.scrollTo(0, {j})")
-            time.sleep(1)  # Allow time for any lazy-loaded content
-            driver.save_screenshot(f'kayak_results_{i}_section_{j//section_height}.png')
         
-        # Set a higher resolution and DPI for better quality
-        driver.set_window_size(1920, total_height)  # Increased from 1920 to 2560 width
+        # Create output directory
+        os.makedirs('output/images', exist_ok=True)
         
-        # Convert screenshot to PIL Image for processing
-        img_binary = driver.get_screenshot_as_png()
-        img = Image.open(io.BytesIO(img_binary))
+        viewport_height = 1000  # Height of each capture
+        overlap = 100  # Pixels of overlap between screenshots
+        current_position = 0
+        section = 0
         
-        # Enhance image quality
-        img = img.convert('RGB')
-        img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
-        
-        # Save with maximum quality
-        img.save(f'kayak_results_{i}.png', 'PNG', quality=100, optimize=False)
+        while current_position < total_height:
+            # Scroll and wait for content
+            driver.execute_script(f"window.scrollTo(0, {current_position})")
+            time.sleep(2)  # Wait for any lazy-loaded content
             
-        print("Screenshots captured")
-             
+            # Take and save screenshot
+            screenshot_path = f'output/images/kayak_results_{i}_section_{section + 1}.png'
+            driver.save_screenshot(screenshot_path)
+            
+            # Enhance the screenshot
+            img = Image.open(screenshot_path)
+            img = img.convert('RGB')
+            img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
+            img.save(screenshot_path, 'PNG', quality=100, optimize=False)
+            
+            print(f"Captured section {section + 1} at position {current_position}/{total_height}")
+            
+            # Move to next section
+            current_position += (viewport_height - overlap)
+            section += 1
+        
         driver.quit()
-        return f'kayak_results_{i}.png'
+        return f'output/images/kayak_results_{i}_section_*.png'
         
     except Exception as e:
         print(f"Error crawling Kayak: {str(e)}")
+        if 'driver' in locals():
+            driver.quit()
         return None
 
 def crawl_flight_data_skyscanner(flight_info):

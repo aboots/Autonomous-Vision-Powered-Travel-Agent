@@ -1,142 +1,32 @@
 {
   "flights": [
     {
-      "airline": "Egyptair",
-      "departure_time": "8:20 pm",
-      "arrival_time": "7:00 am",
-      "price": "$546",
-      "stops": "1 stop",
-      "duration": "19h 40m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Egyptair",
-      "departure_time": "8:20 pm",
-      "arrival_time": "7:00 am",
-      "price": "$476",
-      "stops": "1 stop",
-      "duration": "19h 40m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Emirates",
-      "departure_time": "1:30 am",
-      "arrival_time": "3:30 pm",
-      "price": "$884",
-      "stops": "1 stop",
-      "duration": "23h 00m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Egyptair",
-      "departure_time": "8:20 pm",
-      "arrival_time": "7:00 am",
-      "price": "$477",
-      "stops": "1 stop",
-      "duration": "19h 40m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Emirates",
-      "departure_time": "2:25 am",
-      "arrival_time": "3:55 pm",
-      "price": "$686",
-      "stops": "1 stop",
-      "duration": "20h 30m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Air France",
-      "departure_time": "11:00 am",
-      "arrival_time": "4:55 pm",
-      "price": "$751",
-      "stops": "1 stop",
-      "duration": "36h 55m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Egyptair",
-      "departure_time": "9:20 pm",
-      "arrival_time": "10:30 am",
-      "price": "$476",
-      "stops": "1 stop",
-      "duration": "24h 10m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Ethiopian Airlines",
+      "airline": "Emirates, Condor",
       "departure_time": "3:20 am",
       "arrival_time": "3:25 pm",
-      "price": "$716",
-      "stops": "1 stop",
-      "duration": "23h 05m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Qatar Airways",
-      "departure_time": "2:00 am",
-      "arrival_time": "1:00 pm",
-      "price": "$797",
-      "stops": "1 stop",
-      "duration": "20h 00m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Egyptair",
-      "departure_time": "2:00 am",
-      "arrival_time": "2:00 pm",
-      "price": "$799",
-      "stops": "1 stop",
-      "duration": "20h 00m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Egyptair",
-      "departure_time": "2:15 am",
-      "arrival_time": "2:15 pm",
-      "price": "$686",
-      "stops": "1 stop",
-      "duration": "20h 00m",
+      "price": "$721",
+      "stops": "1 stop (FRA)",
+      "duration": "20h 05m",
       "departure_airport": "DXB",
       "arrival_airport": "YYZ"
     },
     {
       "airline": "Delta",
-      "departure_time": "3:00 am",
-      "arrival_time": "4:00 pm",
-      "price": "$751",
-      "stops": "1 stop",
-      "duration": "20h 00m",
+      "departure_time": "1:55 am",
+      "arrival_time": "4:40 pm",
+      "price": "$753",
+      "stops": "1 stop (AMS)",
+      "duration": "22h 45m",
       "departure_airport": "DXB",
       "arrival_airport": "YYZ"
     },
     {
       "airline": "KLM",
-      "departure_time": "11:10 am",
-      "arrival_time": "4:00 pm",
-      "price": "$752",
-      "stops": "1 stop",
-      "duration": "36h 50m",
-      "departure_airport": "DXB",
-      "arrival_airport": "YYZ"
-    },
-    {
-      "airline": "Emirates",
-      "departure_time": "8:20 am",
-      "arrival_time": "6:15 am",
-      "price": "$925",
-      "stops": "1 stop",
-      "duration": "24h 55m",
+      "departure_time": "1:55 am",
+      "arrival_time": "4:40 pm",
+      "price": "$754",
+      "stops": "1 stop (AMS)",
+      "duration": "22h 45m",
       "departure_airport": "DXB",
       "arrival_airport": "YYZ"
     }

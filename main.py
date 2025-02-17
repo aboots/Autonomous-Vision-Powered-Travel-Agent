@@ -23,12 +23,12 @@ def main():
     # augmented_searches = augment_search_options(flight_info)
     # print("augmented searches done")
 
-    with open('output/augmented_searches.json', 'r', encoding='utf-8') as file:
-        augmented_searches = json.load(file)
-    augmented_searches = [augmented_searches[0]]
-    # # Step 3: Crawl flight data for each search option
-    for i, search in enumerate(augmented_searches):
-        html_content = crawl_flight_data_kayak(search, i)
+    # with open('output/augmented_searches.json', 'r', encoding='utf-8') as file:
+    #     augmented_searches = json.load(file)
+    # augmented_searches = [augmented_searches[0]]
+    # # # Step 3: Crawl flight data for each search option
+    # for i, search in enumerate(augmented_searches):
+    #     html_content = crawl_flight_data_kayak(search, i)
         
         # Step 4: Extract and analyze flight information
         # if html_content:
@@ -41,7 +41,7 @@ def main():
         # analysis = analyze_flights(flights_text)
         # table_output = analyze_flights_table(flights_text)
     
-    # flights_data = extract_flights_listings_llm_v2('kayak_results_0.png')
+    flights_data = extract_flights_listings_llm_v2('output/images/kayak_results_0_section_4.png')
 
     # # Step 5: Interactive filtering
     # interactive_flight_filter()

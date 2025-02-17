@@ -29,10 +29,10 @@ You are a flight information extractor. Your task is to analyze images of flight
     "departure_time": "1:30 am",
     "arrival_time": "8:20 am",
     "price": "$548",
-    "stops": "XYZ, EWR",
+    "stops": "2 stops (XYZ, EWR)",
     "duration": "22h 40m",
-    "departure_airport": "DXB",
-    "arrival_airport": "YYZ"
+    "departure_airport": "IKA",
+    "arrival_airport": "DXB"
 }
 ```
 
