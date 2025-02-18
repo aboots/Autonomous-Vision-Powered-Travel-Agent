@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import json
 from .utils import openai_req_generator, save_output
 import os
+import pandas as pd
 
 import os
 
@@ -11,30 +12,94 @@ def load_prompt(prompt_name):
     with open(prompt_path, 'r', encoding='utf-8') as file:
         return file.read()
     
-def extract_flights_listings_llm_v2(image_url):
-    prompt = load_prompt('extract_flights2')
-    response = openai_req_generator(
-        system_prompt=prompt,
-        user_prompt="Please analyze the Image file containing flight listings.",
-        files=[image_url],
-        json_output=True,
-        model_name="gpt-4o",
-        temperature=0.1
-    )
+def extract_flights_listings_llm_v2(image_urls, i):
+    prompt = load_prompt('extract_flights_images')
     
-    # Convert response to proper format if needed
-    if isinstance(response, str):
-        response = json.loads(response)
+    # Ensure image_urls is a list
+    if isinstance(image_urls, str):
+        image_urls = [image_urls]
+    
+    # ignore last two items becuase buttom of page
+    image_urls = image_urls[:-2] if len(image_urls) > 4 else image_urls
+    
+    # Process images in batches of 3
+    batch_size = 3
+    all_flights = []
+    
+    for i in range(0, len(image_urls), batch_size):
+        batch = image_urls[i:i + batch_size]
+        print(f"Processing batch {i//batch_size + 1} ({len(batch)} images)...")
+        
+        response = openai_req_generator(
+            system_prompt=prompt,
+            user_prompt=f"Please analyze these sequential screenshots (batch {i//batch_size + 1}) of the flight search results webpage and provide a consolidated list.",
+            files=batch,
+            json_output=True,
+            model_name="gpt-4o",
+            temperature=0.1
+        )
+        
+        # Convert response to proper format if needed
+        if isinstance(response, str):
+            response = json.loads(response)
+        
+        # Extract flights from batch response and add to main list
+        batch_flights = response.get('flights', [])
+        all_flights.extend(batch_flights)
+    
+    # Create final consolidated output
+    final_output = {
+        "flights": all_flights
+    }
     
     # Save formatted output
     save_output(
-        response,
-        'all_crawledflights.json',
+        final_output,
+        f'crawledflights_{i}.json',
         'analyzed_data'
     )
-    
-    return response
 
+    # json_to_md_table(final_output)
+
+    # df = pd.DataFrame.from_records(final_output['flights'])
+    # df.to_excel('output/analyzed_data/all_crawledflights.xlsx', index=False)
+    # print(f"\nFiltered flights have been saved to output/analyzed_data/all_crawledflights.xlsx")    
+
+    
+    return final_output
+
+
+def json_to_md_table(json_data):
+    """
+    Convert flight JSON data to a markdown table format.
+    
+    Args:
+        json_data (dict): Dictionary containing flight information
+        
+    Returns:
+        str: Markdown formatted table string
+    """
+    if not json_data.get('flights') or len(json_data['flights']) == 0:
+        md_table = "No flight data available"
+        return
+    
+    # Get headers from the first flight's keys
+    headers = list(json_data['flights'][0].keys())
+    md_table = "\n"
+    # Create table header
+    md_table += "| " + " | ".join(headers) + " |\n"
+    md_table += "|" + "|".join(["-------------" for _ in headers]) + "|\n"
+    
+    # Add each flight as a row
+    for flight in json_data['flights']:
+        row = [str(flight.get(header, '')) for header in headers]
+        md_table += "| " + " | ".join(row) + " |\n"
+
+    save_output(
+        md_table,
+        'step3_all_crawledflights.md',
+    )
+    
 
 def extract_flights_listings_llm(html_content):
     """
@@ -191,7 +256,7 @@ def extract_flight_listings_manually(html_content):
     
     return response
 
-def create_flights_table(flights_text):
+def create_flights_table_llm(flights_text):
     """Format flight information in a readable table format"""
     # Read the system prompt from file
     with open('prompts/format_table.md', 'r', encoding='utf-8') as file:
@@ -208,7 +273,7 @@ def create_flights_table(flights_text):
     # Save formatted table
     save_output(
         response,
-        'all_crawledflights_table.md',
+        'step3_ll_crawledflights_table.md',
     )
     
     return response 

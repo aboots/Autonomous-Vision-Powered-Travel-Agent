@@ -3,13 +3,13 @@ import pandas as pd
 import os
 from .utils import openai_req_generator, save_output
 
-def interactive_flight_filter():
+def interactive_flight_filter(file_name):
     # Modified version of existing code
     query_count = 1
     
     # Load the flights data from analyzed_data directory
-    with open('output/extracted_flights.json', 'r', encoding='utf-8') as f:
-        flights_data = f.read()
+    with open(f'output/{file_name}', 'r', encoding='utf-8') as f:
+        initial_flights_data = f.read()
     
     # Read the system prompt for interactive filtering
     with open('prompts/interactive_filter.md', 'r', encoding='utf-8') as file:
@@ -30,14 +30,14 @@ def interactive_flight_filter():
             break
         
         # Combine flights data with user query
-        combined_prompt = f"Available flights data:\n{flights_data}\n\nUser query: {user_input}"
+        combined_prompt = f"Available flights data:\n{initial_flights_data}\n\nUser query: {user_input}"
         
         # Get filtered results from LLM
         response = openai_req_generator(
             system_prompt=system_prompt,
             user_prompt=combined_prompt,
             json_output=True,  # Changed to True to get JSON response
-            temperature=0.1
+            model_name="gpt-4o"
         )
         
         # Convert response to DataFrame and save to Excel
@@ -53,8 +53,8 @@ def interactive_flight_filter():
             df = pd.DataFrame.from_records(flights_data)
                 # Save filtered results
 
-            os.makedirs('output/excel', exist_ok=True)
-            excel_filename = f'output/excel/filtered_flights_query_{query_count}.xlsx'
+            os.makedirs('output/step4_interactive_filter', exist_ok=True)
+            excel_filename = f'output/step4_interactive_filter/filtered_flights_query_{query_count}.xlsx'
             df.to_excel(excel_filename, index=False)
             print(f"\nFiltered flights have been saved to {excel_filename}")
             
@@ -62,7 +62,7 @@ def interactive_flight_filter():
             save_output(
                 flights_data,
                 f'filtered_flights_query_{query_count}.json',
-                'filtered_results'
+                'step4_interactive_filter'
             ) 
         else:
             print("\nNo flights found matching your criteria.")

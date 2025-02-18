@@ -11,7 +11,7 @@ def extract_flight_info(user_query):
         system_prompt=system_prompt,
         user_prompt=user_query,
         json_output=True,
-        temperature=0.1
+        model_name="gpt-4o",
     )
 
     response = json.loads(response)
@@ -19,7 +19,7 @@ def extract_flight_info(user_query):
     # Save output
     save_output(
         response,
-        'flight_info.json',
+        'step1_flight_info.json',
     )
     
     return response 

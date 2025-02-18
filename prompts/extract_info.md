@@ -27,8 +27,8 @@ Please return the extracted information in JSON format as shown below:
 ### Example 1: Sample Response
 ```json
 {
-    "source_airport": "nyca",
-    "destination_airport": "lond",
+    "source_airport": "NYC",
+    "destination_airport": "LON",
     "start_date": "2025-08-15",
     "return_date": "2025-08-25",
     "number_of_passengers": 2,
@@ -42,8 +42,8 @@ Please return the extracted information in JSON format as shown below:
 ### Example 2: Sample Response
 ```json
 {
-    "source_airport": "dxba",
-    "destination_airport": "ytoa",
+    "source_airport": "DXB",
+    "destination_airport": "YTO",
     "start_date": "2025-03-15",
     "return_date": "-",
     "number_of_passengers": 4,

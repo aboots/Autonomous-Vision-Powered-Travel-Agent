@@ -1,0 +1,144 @@
+{
+  "flights": [
+    {
+      "airline": "British Airways",
+      "departure_time": "8:15 am",
+      "arrival_time": "4:00 pm",
+      "price": "$830",
+      "stops": "1 stop (LHR)",
+      "duration": "14h 45m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines",
+      "departure_time": "3:30 pm",
+      "arrival_time": "7:10 pm",
+      "price": "$836",
+      "stops": "nonstop",
+      "duration": "10h 40m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "FLYONE, WestJet",
+      "departure_time": "9:30 am",
+      "arrival_time": "2:15 pm",
+      "price": "$405",
+      "stops": "2 stops (RMO, DUB)",
+      "duration": "35h 45m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "LOT",
+      "departure_time": "1:55 pm",
+      "arrival_time": "8:20 pm",
+      "price": "$727",
+      "stops": "1 stop (WAW)",
+      "duration": "13h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Wizz Air, Air Transat",
+      "departure_time": "4:35 am",
+      "arrival_time": "4:00 pm",
+      "price": "$691",
+      "stops": "1 stop (LGW)",
+      "duration": "18h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Pegasus Airlines, Condor",
+      "departure_time": "11:25 am",
+      "arrival_time": "5:55 pm",
+      "price": "$823",
+      "stops": "1 stop (FRA)",
+      "duration": "13h 30m",
+      "departure_airport": "SAW",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Lufthansa",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$773",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines, Air Canada",
+      "departure_time": "7:10 am",
+      "arrival_time": "2:40 pm",
+      "price": "$880",
+      "stops": "1 stop (MUC)",
+      "duration": "14h 30m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines, Condor",
+      "departure_time": "11:30 am",
+      "arrival_time": "5:55 pm",
+      "price": "$892",
+      "stops": "1 stop (FRA)",
+      "duration": "13h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Air Canada",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$812",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Lufthansa, Air Canada",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$812",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "LOT",
+      "departure_time": "11:25 am",
+      "arrival_time": "8:20 pm",
+      "price": "$736",
+      "stops": "2 stops (KRK, WAW)",
+      "duration": "15h 55m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Ajet, Icelandair",
+      "departure_time": "10:00 am",
+      "arrival_time": "7:10 pm",
+      "price": "$713",
+      "stops": "2 stops (MUC, KEF)",
+      "duration": "16h 10m",
+      "departure_airport": "SAW",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines, Air Canada",
+      "departure_time": "10:00 am",
+      "arrival_time": "4:20 pm",
+      "price": "$1,381",
+      "stops": "1 stop (FRA)",
+      "duration": "13h 20m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    }
+  ]
+}

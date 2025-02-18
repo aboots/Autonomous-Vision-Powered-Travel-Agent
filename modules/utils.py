@@ -52,13 +52,13 @@ def openai_req_generator(system_prompt, user_prompt, files=None, json_output=Fal
     ]
     
     if files:
-        content_parts = []
+        content_parts = [{"type": "text", "text": user_prompt}]
+        # Add images in sequence
         for file_path in files:
             base64_image = encode_image(file_path)
             content_parts.append({
                 "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-                "detail": "high"
+                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
             })
         messages.append({"role": "user", "content": content_parts})
     else:

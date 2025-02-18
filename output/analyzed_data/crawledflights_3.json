@@ -1,0 +1,174 @@
+{
+  "flights": [
+    {
+      "airline": "Turkish Airlines",
+      "departure_time": "3:30 pm",
+      "arrival_time": "7:10 pm",
+      "price": "$981",
+      "stops": "nonstop",
+      "duration": "10h 40m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines",
+      "departure_time": "3:30 pm",
+      "arrival_time": "7:10 pm",
+      "price": "$836",
+      "stops": "nonstop",
+      "duration": "10h 40m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Multiple airlines",
+      "departure_time": "12:10 am",
+      "arrival_time": "2:15 pm",
+      "price": "$400",
+      "stops": "2 stops (DLM, DUB)",
+      "duration": "45h 05m",
+      "departure_airport": "SAW",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines, WestJet",
+      "departure_time": "7:00 am",
+      "arrival_time": "2:15 pm",
+      "price": "$543",
+      "stops": "1 stop (DUB)",
+      "duration": "14h 15m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "LOT",
+      "departure_time": "1:55 pm",
+      "arrival_time": "8:20 pm",
+      "price": "$727",
+      "stops": "1 stop (WAW)",
+      "duration": "13h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Turkish Airlines, Air Canada",
+      "departure_time": "7:15 am",
+      "arrival_time": "2:50 pm",
+      "price": "$740",
+      "stops": "1 stop",
+      "duration": "13h 35m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Wizz Air, Air Transat",
+      "departure_time": "4:35 am",
+      "arrival_time": "4:00 pm",
+      "price": "$601",
+      "stops": "1 stop (LGW)",
+      "duration": "18h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "LOT",
+      "departure_time": "7:00 am",
+      "arrival_time": "5:20 pm",
+      "price": "$727",
+      "stops": "1 stop (WAW)",
+      "duration": "17h 20m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Aegean Airlines",
+      "departure_time": "10:40 am",
+      "arrival_time": "4:45 pm",
+      "price": "$1,262",
+      "stops": "1 stop (ATH)",
+      "duration": "13h 05m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Aegean Airlines, Lufthansa",
+      "departure_time": "10:40 am",
+      "arrival_time": "4:45 pm",
+      "price": "$1,262",
+      "stops": "1 stop (ATH)",
+      "duration": "13h 05m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Aegean Airlines, Air Canada",
+      "departure_time": "10:40 am",
+      "arrival_time": "4:45 pm",
+      "price": "$1,283",
+      "stops": "1 stop (ATH)",
+      "duration": "13h 05m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Lufthansa",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$1,075",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Lufthansa, Air Canada",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$1,132",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Air Canada",
+      "departure_time": "6:10 am",
+      "arrival_time": "4:20 pm",
+      "price": "$1,132",
+      "stops": "1 stop (FRA)",
+      "duration": "17h 10m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Sky Express, Lufthansa",
+      "departure_time": "9:30 am",
+      "arrival_time": "4:45 pm",
+      "price": "$1,339",
+      "stops": "1 stop (ATH)",
+      "duration": "14h 15m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Sky Express, Aegean Airlines",
+      "departure_time": "9:30 am",
+      "arrival_time": "4:45 pm",
+      "price": "$1,339",
+      "stops": "1 stop (ATH)",
+      "duration": "14h 15m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    },
+    {
+      "airline": "Air France",
+      "departure_time": "4:20 am",
+      "arrival_time": "3:45 pm",
+      "price": "$1,150",
+      "stops": "1 stop (CDG)",
+      "duration": "18h 25m",
+      "departure_airport": "IST",
+      "arrival_airport": "YYZ"
+    }
+  ]
+}

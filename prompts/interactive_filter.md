@@ -9,27 +9,31 @@ Given the flight data and a user query:
 Important:
 - Maintain the exact same JSON structure for each flight object
 - Only include flights that match specified criteria
+- RETURN ALL MATCHED FLIGHTS EVEN IF AFTER FILTERING ALL FLIGHTS REMAIN. DO NOT REMOVE ANY FLIGHTS.
 - Do not add any additional explanation or text - return ONLY the JSON array
 - Handle various types of queries like:
   * Price ranges
   * Time of day preferences
+  * Date
   * Specific airlines
   * Duration preferences
   * Number of stops
-  * Remaining seats requirements
 
 Example output format:
 [
   {
-    "airline": "پگاسوس",
-    "flight_number": "PC1737",
-    "departure_time": "03:55",
-    "departure_city": "تهران",
-    "arrival_time": "08:20",
-    "arrival_city": "استانبول",
-    "duration": "4 ساعت و 55 دقیقه",
-    "price": "68,257,845 ریال",
-    "remaining_seats": "9 باقیمانده"
-  },
+    "airline": "United Airlines",
+    "departure_time": "2:15 am",
+    "arrival_time": "5:23 pm",
+    "price": "$688",
+    "stops": "1 stop (EWR-JFK)",
+    "duration": "23h 08m",
+    "departure_airport": "DXB",
+    "arrival_airport": "YYZ",
+    "start_date": "2025-03-15",
+    "return_date": "-",
+    "number_of_passengers": 4,
+    "other_data": {}
+  }
   ...
 ]

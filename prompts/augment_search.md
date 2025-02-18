@@ -7,7 +7,7 @@ IMPORTANT: You must return an array of JSON objects, not just the original searc
 2. Generate a search with dates 1-2 days before the original
 3. Generate a search with dates 1-2 days after the original
 4. For one-way flights (no return_date), add variations around the start_date
-5. Keep all other parameters exactly the same (airports, passengers, other_data)
+5. Keep all other parameters exactly the same and DO NOT REMOVE ANY KEYS (airports, passengers, other_data)
 6. Avoid duplicate searches
 
 ### Input Format
@@ -29,16 +29,15 @@ You must return an array of JSON objects like this:
 [
     {original_search},
     {variation_1},
-    {variation_2},
-    {variation_3},
+    {variation_2}
 ]
 ```
 
 ### Example Input
 ```json
 {
-    "source_airport": "nyca",
-    "destination_airport": "lond",
+    "source_airport": "NYC",
+    "destination_airport": "LON",
     "start_date": "2025-08-15",
     "return_date": "2025-08-25",
     "number_of_passengers": 2,
@@ -48,32 +47,35 @@ You must return an array of JSON objects like this:
 
 ### Example Output
 ```json
-[
-    {
-        "source_airport": "nyca",
-        "destination_airport": "lond",
-        "start_date": "2025-08-15",
-        "return_date": "2025-08-25",
-        "number_of_passengers": 2,
-        "other_data": {"class": "business"}
-    },
-    {
-        "source_airport": "nyca",
-        "destination_airport": "lond",
-        "start_date": "2025-08-14",
-        "return_date": "2025-08-25",
-        "number_of_passengers": 2,
-        "other_data": {"class": "business"}
-    },
-    {
-        "source_airport": "nyca",
-        "destination_airport": "lond",
-        "start_date": "2025-08-15",
-        "return_date": "2025-08-26",
-        "number_of_passengers": 2,
-        "other_data": {"class": "business"}
-    }
-]
+{
+    "flights": 
+    [
+        {
+            "source_airport": "NYC",
+            "destination_airport": "LON",
+            "start_date": "2025-08-15",
+            "return_date": "2025-08-25",
+            "number_of_passengers": 2,
+            "other_data": {"class": "business"}
+        },
+        {
+            "source_airport": "NYC",
+            "destination_airport": "LON",
+            "start_date": "2025-08-14",
+            "return_date": "2025-08-25",
+            "number_of_passengers": 2,
+            "other_data": {"class": "business"}
+        },
+        {
+            "source_airport": "NYC",
+            "destination_airport": "LON",
+            "start_date": "2025-08-15",
+            "return_date": "2025-08-26",
+            "number_of_passengers": 2,
+            "other_data": {"class": "business"}
+        }
+    ]
+}
 ```
 
-REMEMBER: You must return an array of JSON objects containing the original search and its variations. Do not return just the input search.
+REMEMBER: You must return an array of 3 JSON objects containing the original search and its variations. Do not return just the input search.

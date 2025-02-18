@@ -14,30 +14,26 @@ from PIL import Image
 import io
 
 def crawl_flight_data_kayak(flight_info, i):
-    base_url = "https://www.skyscanner.com/transport/flights/"
-    params = {
-        "adults": str(flight_info['number_of_passengers']),
-        "adultsv2": str(flight_info['number_of_passengers']),
-        "cabinclass": flight_info.get('other_data', {}).get('class', 'economy').lower()
-    }
+    # Construct Kayak URL with proper format
+    base_url = "https://www.kayak.com/flights/"
     
-    # Construct URL path with airports and dates
-    url_path = (
-        f"{flight_info['source_airport'].lower()}/"
-        f"{flight_info['destination_airport'].lower()}/"
-        f"{flight_info['start_date'].replace('-','')}/"
-    )
+    # Format airports (add 'nearby' suffix for broader search)
+    source = f"{flight_info['source_airport'].upper()},nearby"
+    destination = f"{flight_info['destination_airport'].upper()},nearby"
     
-    if flight_info['return_date'] and flight_info['return_date'] != '-':
-        url_path += f"{flight_info['return_date'].replace('-','')}/"
-        
+    # Format date (YYYY-MM-DD)
+    date_str = flight_info['start_date']
+    
+    # Format passengers
+    passengers = f"{flight_info['number_of_passengers']}adults"
+    
+    # Construct URL path
+    url_path = f"{source}-{destination}/{date_str}/{passengers}?sort=bestflight_a"
+    
     url = base_url + url_path
-    
     try:
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
-        # Add these new arguments to make the browser appear more human-like
-        # chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -50,24 +46,20 @@ def crawl_flight_data_kayak(flight_info, i):
         chrome_options.binary_location = f"{homedir}/chrome-linux64/chrome"
         webdriver_service = Service(f"{homedir}/chromedriver-linux64/chromedriver")
 
-        # Choose Chrome Browser
+        # Initialize driver
         driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
         
         # Execute CDP commands to modify navigator.webdriver flag
         driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'})
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
-        final_url = requests.Request('GET', url, params=params).prepare().url
-        final_url = "https://www.kayak.com/flights/DXB,nearby-YTO,nearby/2025-03-28/3adults?sort=bestflight_a"
-        print(f"Skyscanner URL: {final_url}")
-        driver.get(final_url)
+        print(f"Kayak URL: {url}")
+        driver.get(url)
         
-        # Wait for and click the cookie consent button
+        # Handle cookie consent
         try:
-            # Wait up to 10 seconds for the cookie consent button
             wait = WebDriverWait(driver, 10)
             cookie_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.RxNS')))
-            # Find the specific "Accept all" button by its text content
             accept_buttons = driver.find_elements(By.CSS_SELECTOR, 'button.RxNS')
             for button in accept_buttons:
                 if button.text.strip().lower() == 'accept all':
@@ -80,8 +72,8 @@ def crawl_flight_data_kayak(flight_info, i):
         print("Waiting for page to load...")
         time.sleep(25)
         
-        # Set a reasonable window size - wider but not too tall
-        driver.set_window_size(1920, 1200)  # Good width for detail, reasonable height
+        # Set window size for consistent screenshots
+        driver.set_window_size(1920, 1200)
         
         # Get total page height
         total_height = driver.execute_script("return document.body.scrollHeight")
@@ -89,21 +81,21 @@ def crawl_flight_data_kayak(flight_info, i):
         # Create output directory
         os.makedirs('output/images', exist_ok=True)
         
-        viewport_height = 1000  # Height of each capture
-        overlap = 100  # Pixels of overlap between screenshots
+        # Screenshot parameters
+        viewport_height = 1000
+        overlap = 100
         current_position = 0
         section = 0
         
+        # Take screenshots
         while current_position < total_height:
-            # Scroll and wait for content
             driver.execute_script(f"window.scrollTo(0, {current_position})")
-            time.sleep(2)  # Wait for any lazy-loaded content
+            time.sleep(2)
             
-            # Take and save screenshot
             screenshot_path = f'output/images/kayak_results_{i}_section_{section + 1}.png'
             driver.save_screenshot(screenshot_path)
             
-            # Enhance the screenshot
+            # Enhance screenshot quality
             img = Image.open(screenshot_path)
             img = img.convert('RGB')
             img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
@@ -111,7 +103,6 @@ def crawl_flight_data_kayak(flight_info, i):
             
             print(f"Captured section {section + 1} at position {current_position}/{total_height}")
             
-            # Move to next section
             current_position += (viewport_height - overlap)
             section += 1
         
