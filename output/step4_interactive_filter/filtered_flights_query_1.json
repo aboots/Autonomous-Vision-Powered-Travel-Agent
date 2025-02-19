@@ -14,6 +14,34 @@
     "other_data": {}
   },
   {
+    "airline": "Multiple airlines",
+    "departure_time": "4:30 pm",
+    "arrival_time": "2:15 pm",
+    "price": "$364",
+    "stops": "2 stops (OTP, DUB)",
+    "duration": "28h 45m",
+    "departure_airport": "SAW",
+    "arrival_airport": "YYZ",
+    "start_date": "2025-04-20",
+    "return_date": "-",
+    "number_of_passengers": 6,
+    "other_data": {}
+  },
+  {
+    "airline": "LOT",
+    "departure_time": "1:55 pm",
+    "arrival_time": "8:20 pm",
+    "price": "$727",
+    "stops": "1 stop (WAW)",
+    "duration": "13h 25m",
+    "departure_airport": "IST",
+    "arrival_airport": "YYZ",
+    "start_date": "2025-04-20",
+    "return_date": "-",
+    "number_of_passengers": 6,
+    "other_data": {}
+  },
+  {
     "airline": "Turkish Airlines",
     "departure_time": "3:30 pm",
     "arrival_time": "7:10 pm",
