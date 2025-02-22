@@ -79,7 +79,7 @@ def crawl_flight_data_kayak(flight_info, i):
         total_height = driver.execute_script("return document.body.scrollHeight")
         
         # Create output directory
-        os.makedirs('output/images', exist_ok=True)
+        os.makedirs('output/step3_images', exist_ok=True)
         
         # Screenshot parameters
         viewport_height = 1000
@@ -92,7 +92,7 @@ def crawl_flight_data_kayak(flight_info, i):
             driver.execute_script(f"window.scrollTo(0, {current_position})")
             time.sleep(2)
             
-            screenshot_path = f'output/images/kayak_results_{i}_section_{section + 1}.png'
+            screenshot_path = f'output/step3_images/kayak_results_{i}_section_{section + 1}.png'
             driver.save_screenshot(screenshot_path)
             
             # Enhance screenshot quality
@@ -107,7 +107,7 @@ def crawl_flight_data_kayak(flight_info, i):
             section += 1
         
         driver.quit()
-        return f'output/images/kayak_results_{i}_section_*.png'
+        return f'output/step3_images/kayak_results_{i}_section_*.png'
         
     except Exception as e:
         print(f"Error crawling Kayak: {str(e)}")

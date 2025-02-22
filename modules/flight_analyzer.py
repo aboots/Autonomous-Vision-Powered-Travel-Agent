@@ -12,7 +12,7 @@ def load_prompt(prompt_name):
     with open(prompt_path, 'r', encoding='utf-8') as file:
         return file.read()
     
-def extract_flights_listings_llm_v2(image_urls, i):
+def extract_flights_listings_llm_v2(image_urls, j):
     prompt = load_prompt('extract_flights_images')
     
     # Ensure image_urls is a list
@@ -32,7 +32,7 @@ def extract_flights_listings_llm_v2(image_urls, i):
         
         response = openai_req_generator(
             system_prompt=prompt,
-            user_prompt=f"Please analyze these sequential screenshots (batch {i//batch_size + 1}) of the flight search results webpage and provide a consolidated list.",
+            user_prompt=f"Please analyze these sequential screenshots of the flight search results webpage and provide a consolidated list.",
             files=batch,
             json_output=True,
             model_name="gpt-4o",
@@ -55,15 +55,9 @@ def extract_flights_listings_llm_v2(image_urls, i):
     # Save formatted output
     save_output(
         final_output,
-        f'crawledflights_{i}.json',
-        'analyzed_data'
+        f'crawledflights_{j}.json',
+        'step3_analyzed_data'
     )
-
-    # json_to_md_table(final_output)
-
-    # df = pd.DataFrame.from_records(final_output['flights'])
-    # df.to_excel('output/analyzed_data/all_crawledflights.xlsx', index=False)
-    # print(f"\nFiltered flights have been saved to output/analyzed_data/all_crawledflights.xlsx")    
 
     
     return final_output

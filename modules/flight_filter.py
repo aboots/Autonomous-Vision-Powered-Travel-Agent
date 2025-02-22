@@ -29,13 +29,12 @@ def interactive_flight_filter(file_name):
         if user_input.lower() == 'exit':
             break
         
-        # Combine flights data with user query
-        combined_prompt = f"Available flights data:\n{initial_flights_data}\n\nUser query: {user_input}"
+        system_prompt = system_prompt.replace('{flights_data}', initial_flights_data)
         
         # Get filtered results from LLM
         response = openai_req_generator(
             system_prompt=system_prompt,
-            user_prompt=combined_prompt,
+            user_prompt=user_input,
             json_output=True,  # Changed to True to get JSON response
             model_name="gpt-4o"
         )
