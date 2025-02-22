@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flight Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Flight Search Results</h1>
+
+        <!-- Display Search Query -->
+        <div class="search-query">
+            <h2>Your Search Query:</h2>
+            <div class="query-text">"{{ query }}"</div>
+        </div>
+
+        <!-- Step 1: Flight Info Extraction -->
+        <div id="step1" class="step-container loading">
+            <div class="step-header">
+                <h2>Step 1: Flight Information Extraction</h2>
+                <div class="loading-indicator">Processing...</div>
+            </div>
+            <div class="step-content"></div>
+        </div>
+
+        <!-- Step 2: Augmented Searches -->
+        <div id="step2" class="step-container loading">
+            <div class="step-header">
+                <h2>Step 2: Search Options Generation</h2>
+                <div class="loading-indicator">Waiting...</div>
+            </div>
+            <div class="step-content"></div>
+        </div>
+
+        <!-- Step 3: Flight Results -->
+        <div id="step3" class="step-container loading">
+            <div class="step-header">
+                <h2>Step 3: Flight Search Results</h2>
+                <div class="loading-indicator">Waiting...</div>
+            </div>
+            <div class="step-content"></div>
+        </div>
+
+        <!-- Step 4: Interactive Filter -->
+        <div id="step4" class="step-container">
+            <div class="step-header">
+                <h2>Step 4: Interactive Flight Filter</h2>
+                <p class="step-description">Filter flights by entering your criteria</p>
+            </div>
+            <div class="step-content">
+                <div class="filter-form">
+                    <input type="text" id="filterQuery" placeholder="e.g., 'Show me direct flights under $800' or 'Find morning flights with Turkish Airlines'">
+                    <button onclick="filterFlights()">Filter Flights</button>
+                </div>
+                <div id="filterResults">
+                    <div class="filter-stats"></div>
+                    <div class="filter-table"></div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="back-button">New Search</a>
+    </div>
+
+    <script>
+        const socket = io();
+
+        // Get query from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userQuery = urlParams.get('query');
+
+        // Start search when page loads
+        if (userQuery) {
+            socket.emit('start_search', userQuery);
+        }
+
+        // Handle Step 1 completion
+        socket.on('step1_complete', function(data) {
+            const step1 = document.getElementById('step1');
+            step1.classList.remove('loading');
+            step1.querySelector('.loading-indicator').remove();
+            step1.querySelector('.step-content').innerHTML = data.table;
+        });
+
+        // Handle Step 2 completion
+        socket.on('step2_complete', function(data) {
+            const step2 = document.getElementById('step2');
+            step2.classList.remove('loading');
+            step2.querySelector('.loading-indicator').remove();
+            step2.querySelector('.step-content').innerHTML = data.table;
+        });
+
+        // Handle Step 3 completion
+        socket.on('step3_complete', function(data) {
+            const step3 = document.getElementById('step3');
+            step3.classList.remove('loading');
+            step3.querySelector('.loading-indicator').remove();
+            step3.querySelector('.step-content').innerHTML = data.table;
+        });
+
+        function filterFlights() {
+            const query = document.getElementById('filterQuery').value;
+            const filterResults = document.getElementById('filterResults');
+            const filterStats = filterResults.querySelector('.filter-stats');
+            const filterTable = filterResults.querySelector('.filter-table');
+
+            filterStats.innerHTML = 'Filtering...';
+            filterTable.innerHTML = '';
+
+            fetch('/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    filterStats.innerHTML = `Found ${data.count} flights matching your criteria`;
+                    filterTable.innerHTML = data.table;
+                })
+                .catch(error => {
+                    filterStats.innerHTML = 'Error filtering flights';
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flight AI Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Flight AI Search Demo</h1>
+        <div class="controls">
+            <button onclick="clearCache()" class="clear-cache-btn">Clear Cache</button>
+        </div>
+        <form id="searchForm" onsubmit="handleSubmit(event)">
+            <div class="search-box">
+                <textarea name="query" id="queryInput" placeholder="Enter your flight search query (e.g., 'I need a flight from New York to London next month for 2 people')" rows="4"></textarea>
+                <button type="submit">Search Flights</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const query = document.getElementById('queryInput').value;
+            window.location.href = `/search?query=${encodeURIComponent(query)}`;
+        }
+
+        function clearCache() {
+            fetch('/clear-cache', {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Cache cleared successfully. Next search will fetch fresh data.');
+                })
+                .catch(error => {
+                    console.error('Error clearing cache:', error);
+                    alert('Error clearing cache');
+                });
+        }
+    </script>
+</body>
+
+</html>

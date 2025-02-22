@@ -93,7 +93,152 @@ def json_to_md_table(json_data):
         md_table,
         'step3_all_crawledflights.md',
     )
+
+    return md_table
+
+
+def create_html_table(flights):
+    """Create an HTML table from flights data"""
+    if not flights:
+        return "<p>No flights found</p>"
+        
+    table_html = """
+    <table class="flights-table">
+        <thead>
+            <tr>
+                <th>Airline</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Price</th>
+                <th>Duration</th>
+                <th>Stops</th>
+                <th>Date</th>
+                <th>Passengers</th>
+                <th>Other Data</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
     
+    # Sort flights by price (removing '$' and converting to float)
+    sorted_flights = sorted(flights, key=lambda x: float(x.get('price', '$0').replace('$', '').replace(',', '')))
+    
+    for flight in sorted_flights:
+        other_data = json.dumps(flight.get('other_data', {}))
+        table_html += f"""
+            <tr>
+                <td class="airline">{flight.get('airline', 'N/A')}</td>
+                <td class="departure">
+                    <div class="time">{flight.get('departure_time', 'N/A')}</div>
+                    <div class="airport">{flight.get('departure_airport', 'N/A')}</div>
+                </td>
+                <td class="arrival">
+                    <div class="time">{flight.get('arrival_time', 'N/A')}</div>
+                    <div class="airport">{flight.get('arrival_airport', 'N/A')}</div>
+                </td>
+                <td class="price">{flight.get('price', 'N/A')}</td>
+                <td class="duration">{flight.get('duration', 'N/A')}</td>
+                <td class="stops">{flight.get('stops', 'N/A')}</td>
+                <td class="date">
+                    <div>Departure Date: {flight.get('start_date', 'N/A')}</div>
+                    <div>Return Date: {flight.get('return_date', '-')}</div>
+                </td>
+                <td class="passengers">{flight.get('number_of_passengers', 'N/A')}</td>
+                <td class="other-data">{other_data}</td>
+            </tr>
+        """
+    
+    table_html += """
+        </tbody>
+    </table>
+    """
+    
+    return table_html
+
+def create_step1_table(flight_info):
+    """Create HTML table for step 1 results (single flight query info)"""
+    if not flight_info:
+        return "<p>No flight information found</p>"
+        
+    table_html = """
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    
+    # Define display order and labels
+    display_order = [
+        ('source_airport', 'From Airport'),
+        ('destination_airport', 'To Airport'),
+        ('start_date', 'Departure Date'),
+        ('return_date', 'Return Date'),
+        ('number_of_passengers', 'Number of Passengers'),
+        ('other_data', 'Additional Information')
+    ]
+    
+    for key, label in display_order:
+        value = flight_info.get(key, 'N/A')
+        if key == 'other_data':
+            value = json.dumps(value) if value else '{}'
+        
+        table_html += f"""
+            <tr>
+                <td class="key">{label}</td>
+                <td class="value">{value}</td>
+            </tr>
+        """
+    
+    table_html += """
+        </tbody>
+    </table>
+    """
+    return table_html
+
+def create_step2_table(augmented_searches):
+    """Create HTML table for step 2 results (list of augmented search options)"""
+    if not augmented_searches:
+        return "<p>No augmented searches generated</p>"
+        
+    table_html = """
+    <table class="augmented-searches-table">
+        <thead>
+            <tr>
+                <th>Option</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Departure Date</th>
+                <th>Return Date</th>
+                <th>Passengers</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    
+    for i, search in enumerate(augmented_searches, 1):
+        other_data = json.dumps(search.get('other_data', {}))
+        table_html += f"""
+            <tr>
+                <td class="option-number">Option {i}</td>
+                <td class="airport">{search.get('source_airport', 'N/A')}</td>
+                <td class="airport">{search.get('destination_airport', 'N/A')}</td>
+                <td class="date">{search.get('start_date', 'N/A')}</td>
+                <td class="date">{search.get('return_date', '-')}</td>
+                <td class="passengers">{search.get('number_of_passengers', 'N/A')}</td>
+                <td class="other-data">{other_data}</td>
+            </tr>
+        """
+    
+    table_html += """
+        </tbody>
+    </table>
+    """
+    return table_html
 
 def extract_flights_listings_llm(html_content):
     """

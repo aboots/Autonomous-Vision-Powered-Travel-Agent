@@ -1,8 +1,8 @@
 {
   "source_airport": "IST",
   "destination_airport": "YTO",
-  "start_date": "2025-04-20",
+  "start_date": "2025-04-16",
   "return_date": "-",
-  "number_of_passengers": 6,
+  "number_of_passengers": 4,
   "other_data": {}
 }

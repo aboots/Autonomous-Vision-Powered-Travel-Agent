@@ -67,3 +67,59 @@ def interactive_flight_filter(file_name):
             print("\nNo flights found matching your criteria.")
         
         query_count += 1
+
+def interactive_flight_filter_v2(flights_data, query):
+    """Web version of interactive flight filter"""
+    
+    # Load the system prompt for interactive filtering
+    with open('prompts/interactive_filter.md', 'r', encoding='utf-8') as file:
+        system_prompt = file.read()
+    
+    # Replace placeholder in system prompt
+    system_prompt = system_prompt.replace('{flights_data}', json.dumps(flights_data))
+
+    if os.path.exists('output/step4_interactive_filter/query_count.txt'):
+        with open('output/step4_interactive_filter/query_count.txt', 'r') as file:
+            query_count = int(file.read())
+    else:
+        query_count = 1
+    
+    # Get filtered results from LLM
+    response = openai_req_generator(
+        system_prompt=system_prompt,
+        user_prompt=query,
+        json_output=True,
+        model_name="gpt-4o"
+    )
+            # Convert response to DataFrame and save to Excel
+    if isinstance(response, str):
+        filtered_flights = json.loads(response)
+    else:
+        filtered_flights = response
+        
+    if filtered_flights and len(filtered_flights) > 0:
+        flights_data = filtered_flights["flights"]
+
+        # Create DataFrame directly from the list of flight dictionaries
+        df = pd.DataFrame.from_records(flights_data)
+            # Save filtered results
+
+        os.makedirs('output/step4_interactive_filter', exist_ok=True)
+        excel_filename = f'output/step4_interactive_filter/filtered_flights_query_{query_count}.xlsx'
+        df.to_excel(excel_filename, index=False)
+        print(f"\nFiltered flights have been saved to {excel_filename}")
+        
+        # Also display the results in a nice format
+        save_output(
+            flights_data,
+            f'filtered_flights_query_{query_count}.json',
+            'step4_interactive_filter'
+        ) 
+    else:
+        print("\nNo flights found matching your criteria.")
+    
+    query_count += 1
+    with open('output/step4_interactive_filter/query_count.txt', 'w') as file:
+        file.write(str(query_count))
+        
+    return filtered_flights

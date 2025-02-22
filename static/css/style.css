@@ -1,0 +1,379 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-box {
+    margin: 20px 0;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.step-container {
+    margin: 30px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+pre {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.flight-results {
+    overflow-x: auto;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.loading .loading-indicator {
+    color: #666;
+    padding: 20px;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+.filter-form {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.filter-form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filter-form button {
+    padding: 10px 20px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background-color: #34495e;
+}
+
+#filterResults {
+    margin-top: 20px;
+}
+
+.controls {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.clear-cache-btn {
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clear-cache-btn:hover {
+    background-color: #c82333;
+}
+
+
+/* Search Query Display */
+
+.search-query {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #2c3e50;
+}
+
+.search-query h2 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 1.2em;
+}
+
+.query-text {
+    font-style: italic;
+    color: #666;
+    font-size: 1.1em;
+}
+
+
+/* Enhanced Flight Table Styles */
+
+.flights-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.flights-table thead {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.flights-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.flights-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.flights-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.flights-table .time {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.flights-table .airport {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 4px;
+}
+
+.flights-table .price {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1em;
+}
+
+.flights-table .stops {
+    color: #dc3545;
+}
+
+.flights-table .duration {
+    color: #0056b3;
+    font-weight: 500;
+}
+
+.flights-table .airline {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.flights-table .date {
+    font-size: 0.9em;
+}
+
+.flights-table .passengers {
+    text-align: center;
+    color: #666;
+}
+
+
+/* Make table responsive */
+
+@media screen and (max-width: 1024px) {
+    .flights-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+
+/* Add to existing styles */
+
+.info-table,
+.augmented-searches-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.info-table th,
+.augmented-searches-table th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.info-table td,
+.augmented-searches-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.info-table .key {
+    font-weight: 500;
+    color: #2c3e50;
+    width: 30%;
+}
+
+.filter-stats {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.filter-form input {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.filter-form button {
+    padding: 10px 20px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background-color: #34495e;
+}
+
+
+/* Step 1 table styles */
+
+.info-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.info-table .key {
+    width: 30%;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.info-table .value {
+    color: #34495e;
+}
+
+
+/* Step 2 table styles */
+
+.augmented-searches-table {
+    width: 100%;
+}
+
+.augmented-searches-table .option-number {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.augmented-searches-table .airport {
+    font-weight: 500;
+    color: #34495e;
+}
+
+.augmented-searches-table .date {
+    color: #666;
+}
+
+.augmented-searches-table .passengers {
+    text-align: center;
+}
+
+
+/* Common table styles */
+
+.info-table,
+.augmented-searches-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.info-table th,
+.augmented-searches-table th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.info-table td,
+.augmented-searches-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.other-data {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.other-data:hover {
+    white-space: normal;
+    overflow: visible;
+    background-color: #fff;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
