@@ -32,6 +32,6 @@ archive.zip
 selenium_test.py
 excel_test.py
 output-old/
-lagecy_code_test/
+# lagecy_code_test/
 output-old-v2/
 output/
