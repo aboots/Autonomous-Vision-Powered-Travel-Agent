@@ -88,13 +88,21 @@ def crawl_flight_data_kayak(flight_info, i):
         print("Waiting for page to load...")
         time.sleep(10)
         
+        
         # Set window size for consistent screenshots
         driver.set_window_size(1920, 1200)
         
         # Scroll to the filters section (left sidebar)
         driver.execute_script("window.scrollTo(0, 450)")
         time.sleep(2)
-        
+
+               # Save the HTML content of the page
+        page_content = driver.page_source
+        html_file_path = f'output/step3_images/kayak_page_{i}.html'
+        with open(html_file_path, 'w', encoding='utf-8') as html_file:
+            html_file.write(page_content)
+        print(f"Saved HTML content to {html_file_path}")
+
         # Take screenshot of the filters section
         filters_screenshot_path = f'output/step3_images/kayak_filters_{i}.png'
         driver.save_screenshot(filters_screenshot_path)
