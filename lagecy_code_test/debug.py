@@ -31,7 +31,15 @@ import io
 from bs4 import BeautifulSoup
 import re
 
-def crawl_flight_data_kayak(flight_info, i):
+def crawl_flight_data_kayak(flight_info, i, filters=None):
+    """
+    Crawl flight data from Kayak with optional filters
+    
+    Parameters:
+    flight_info (dict): Flight search parameters
+    i (int): Index for file naming
+    filters (dict): Optional filters to apply, e.g. {'airline': 'Air Canada', 'stops': 'nonstop'}
+    """
     # Construct Kayak URL with proper format
     base_url = "https://www.kayak.com/flights/"
     
@@ -49,284 +57,202 @@ def crawl_flight_data_kayak(flight_info, i):
     url_path = f"{source}-{destination}/{date_str}/{passengers}?sort=bestflight_a"
     
     url = base_url + url_path
+    # try:
+    chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    
+    # Add random user agent
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+
+    homedir = os.path.expanduser("~")
+    chrome_options.binary_location = f"{homedir}/chrome-linux64/chrome"
+    webdriver_service = Service(f"{homedir}/chromedriver-linux64/chromedriver")
+
+    # Initialize driver
+    driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+    
+    # Execute CDP commands to modify navigator.webdriver flag
+    driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'})
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    
+    print(f"Kayak URL: {url}")
+    driver.get(url)
+    
+    # Handle cookie consent
     try:
-        chrome_options = Options()
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        chrome_options.add_experimental_option('useAutomationExtension', False)
-        
-        # Add random user agent
-        chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+        wait = WebDriverWait(driver, 10)
+        cookie_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.RxNS')))
+        accept_buttons = driver.find_elements(By.CSS_SELECTOR, 'button.RxNS')
+        for button in accept_buttons:
+            if button.text.strip().lower() == 'accept all':
+                button.click()
+                print("Accepted cookies")
+                break
+    except TimeoutException:
+        print("Cookie consent button not found or not clickable")
+    
+    print("Waiting for page to load...")
+    time.sleep(10)
+    
+    # Set window size for consistent screenshots
+    driver.set_window_size(1920, 1200)
+    
+    # Scroll to the filters section (left sidebar)
+    driver.execute_script("window.scrollTo(0, 650)")
+    time.sleep(2)
 
-        homedir = os.path.expanduser("~")
-        chrome_options.binary_location = f"{homedir}/chrome-linux64/chrome"
-        webdriver_service = Service(f"{homedir}/chromedriver-linux64/chromedriver")
+    # Save the HTML content of the page
+    page_content = driver.page_source
+    html_file_path = f'output/step3_images/kayak_page_{i}.html'
+    with open(html_file_path, 'w', encoding='utf-8') as html_file:
+        html_file.write(page_content)
+    print(f"Saved HTML content to {html_file_path}")
 
-        # Initialize driver
-        driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
-        
-        # Execute CDP commands to modify navigator.webdriver flag
-        driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'})
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        
-        print(f"Kayak URL: {url}")
-        driver.get(url)
-        
-        # Handle cookie consent
-        try:
-            wait = WebDriverWait(driver, 10)
-            cookie_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.RxNS')))
-            accept_buttons = driver.find_elements(By.CSS_SELECTOR, 'button.RxNS')
-            for button in accept_buttons:
-                if button.text.strip().lower() == 'accept all':
-                    button.click()
-                    print("Accepted cookies")
-                    break
-        except TimeoutException:
-            print("Cookie consent button not found or not clickable")
-        
-        print("Waiting for page to load...")
-        time.sleep(10)
-        
-        
-        # Set window size for consistent screenshots
-        driver.set_window_size(1920, 1200)
-        
-        # Scroll to the filters section (left sidebar)
-        driver.execute_script("window.scrollTo(0, 450)")
+    # Take screenshot of the filters section
+    filters_screenshot_path = f'output/step3_images/kayak_filters_{i}.png'
+    driver.save_screenshot(filters_screenshot_path)
+    
+    # Enhance screenshot quality
+    img = Image.open(filters_screenshot_path)
+    img = img.convert('RGB')
+    img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
+    img.save(filters_screenshot_path, 'PNG', quality=100, optimize=False)
+    
+    # Apply filters if provided
+    if filters and isinstance(filters, dict):
+        for filter_type, filter_value in filters.items():
+            apply_filter(driver, filter_type, filter_value, html_file_path, filters_screenshot_path)
+            # Wait between applying filters
+            time.sleep(3)
+    
+    # Get total page height after filtering
+    return
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    
+    # Create output directory
+    os.makedirs('output/step3_images', exist_ok=True)
+    
+    # Screenshot parameters
+    viewport_height = 1000
+    overlap = 100
+    current_position = 0
+    section = 0
+    
+    # Take screenshots of filtered results
+    while current_position < total_height:
+        driver.execute_script(f"window.scrollTo(0, {current_position})")
         time.sleep(2)
-
-        # Save the HTML content of the page
-        page_content = driver.page_source
-        html_file_path = f'output/step3_images/kayak_page_{i}.html'
-        with open(html_file_path, 'w', encoding='utf-8') as html_file:
-            html_file.write(page_content)
-        print(f"Saved HTML content to {html_file_path}")
-
-        # Take screenshot of the filters section
-        filters_screenshot_path = f'output/step3_images/kayak_filters_{i}.png'
-        driver.save_screenshot(filters_screenshot_path)
+        
+        screenshot_path = f'output/step3_images/kayak_results_{i}_section_{section + 1}.png'
+        driver.save_screenshot(screenshot_path)
         
         # Enhance screenshot quality
-        img = Image.open(filters_screenshot_path)
+        img = Image.open(screenshot_path)
         img = img.convert('RGB')
         img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
-        img.save(filters_screenshot_path, 'PNG', quality=100, optimize=False)
+        img.save(screenshot_path, 'PNG', quality=100, optimize=False)
         
-        # Extract potential Air Canada selectors from HTML
-        with open(html_file_path, 'r', encoding='utf-8') as f:
-            soup = BeautifulSoup(f.read(), 'html.parser')
+        print(f"Captured section {section + 1} at position {current_position}/{total_height}")
         
-        # Find all elements containing exactly "Air Canada" text
-        air_canada_elements = []
+        current_position += (viewport_height - overlap)
+        section += 1
+    
+    driver.quit()
+    return f'output/step3_images/kayak_results_{i}_section_*.png'
         
-        # Method 1: Find elements with exact text "Air Canada"
-        for element in soup.find_all(string=re.compile(r'^Air Canada$')):
-            parent = element.parent
-            air_canada_elements.append({
-                'element_type': parent.name,
-                'element_text': element.strip(),
-                'element_html': str(parent),
-                'element_attrs': parent.attrs
-            })
-        
-        # Method 2: Find elements with exact text "Air Canada" with possible whitespace
-        for element in soup.find_all(string=re.compile(r'^\s*Air Canada\s*$')):
-            parent = element.parent
-            air_canada_elements.append({
-                'element_type': parent.name,
-                'element_text': element.strip(),
-                'element_html': str(parent),
-                'element_attrs': parent.attrs
-            })
-        
-        # Method 3: Find input elements that have Air Canada in their label or nearby text
-        for label in soup.find_all(['label', 'div'], string=re.compile(r'Air Canada')):
-            # Look for nearby input elements (children, siblings, etc.)
-            inputs = label.find_all('input') or label.parent.find_all('input')
-            for input_elem in inputs:
-                air_canada_elements.append({
-                    'element_type': 'input',
-                    'element_text': 'Input near: ' + label.get_text().strip(),
-                    'element_html': str(input_elem),
-                    'element_attrs': input_elem.attrs
-                })
-        
-        # Method 4: Find elements with Air Canada in specific attributes
-        # for element in soup.find_all(attrs={"aria-label": re.compile(r'Air Canada', re.I)}):
-        #     air_canada_elements.append({
-        #         'element_type': element.name,
-        #         'element_text': element.get_text().strip(),
-        #         'element_html': str(element),
-        #         'element_attrs': element.attrs
-        #     })
-        
-        # # Method 5: Find checkbox inputs within a small distance of Air Canada text
-        # for element in soup.find_all(string=re.compile(r'Air Canada')):
-        #     parent = element.parent
-        #     # Look up to 3 levels up for checkboxes
-        #     current = parent
-        #     for _ in range(3):
-        #         if current:
-        #             checkboxes = current.find_all('input', type='checkbox')
-        #             for checkbox in checkboxes:
-        #                 air_canada_elements.append({
-        #                     'element_type': 'checkbox',
-        #                     'element_text': 'Checkbox near: ' + element.strip(),
-        #                     'element_html': str(checkbox),
-        #                     'element_attrs': checkbox.attrs
-        #                 })
-        #             current = current.parent
-        
-        print(f"Found {len(air_canada_elements)} potential Air Canada elements")
-        
-        # Create system and user prompts for GPT-4o with both HTML elements and screenshot
-        system_prompt = """
-        You are an expert in web automation. Analyze both the screenshot of a Kayak flight search page 
-        and the HTML elements I've extracted that contain "Air Canada" references.
-        
-        Your task is to identify the most reliable selector that can be used with Selenium to click 
-        on the Air Canada checkbox in the airlines filter section.
-        
-        Examine both the visual information from the screenshot and the HTML structure from the extracted elements.
-        Return ONLY the most reliable selector as a JSON object with these keys:
-        - 'selector_type': either 'xpath', 'css', or 'id'
-        - 'selector': the actual selector string
-        - 'explanation': brief explanation of why this is the best selector
-        """
-        
-        # Format the HTML elements for the prompt
-        html_elements_text = "Extracted HTML elements containing 'Air Canada':\n\n"
-        for i, elem in enumerate(air_canada_elements, 1):
-            html_elements_text += f"Element {i}:\n"
-            html_elements_text += f"Type: {elem['element_type']}\n"
-            html_elements_text += f"Text: {elem['element_text']}\n"
-            html_elements_text += f"Attributes: {elem['element_attrs']}\n"
-            html_elements_text += f"HTML: {elem['element_html'][:200]}...\n\n"
-        
-        user_prompt = f"""
-        Find the Air Canada filter checkbox in the Kayak flight search page.
-        
-        Here are HTML elements containing 'Air Canada' references:
-        
-        {html_elements_text}
-        
-        The screenshot shows the filters section of the page. Please analyze both the HTML elements and the screenshot 
-        to provide the most reliable selector for clicking the Air Canada checkbox.
-        """
-        
-        gpt_response = openai_req_generator(
-            system_prompt, 
-            user_prompt, 
-            files=[filters_screenshot_path], 
-            json_output=True, 
-            model_name="gpt-4o"
-        )
+    # except Exception as e:
+    #     print(f"Error crawling Kayak: {str(e)}")
+    #     if 'driver' in locals():
+    #         driver.quit()
+    #     return None
 
-        gpt_response = json.loads(gpt_response)
-        print(gpt_response)
-        
-        # Extract selector information
+def apply_filter(driver, filter_type, filter_value, html_file_path, screenshot_path):
+    """Apply a single filter to the search results"""
+    print(f"Applying filter: {filter_type}={filter_value}")
+    
+    # Extract potential filter elements from HTML
+    with open(html_file_path, 'r', encoding='utf-8') as f:
+        soup = BeautifulSoup(f.read(), 'html.parser')
+    
+    # For Air Canada specifically, we know the exact ID from inspection
+    if filter_type == 'airline' and filter_value == 'Air Canada':
         try:
-            selector_type = gpt_response.get('selector_type', 'xpath')
-            selector = gpt_response.get('selector', '')
-            explanation = gpt_response.get('explanation', '')
+            # First try to find the input element directly by ID
+            print("Looking for Air Canada checkbox by ID")
+            checkbox_id = "valueSetFilter-vertical-airlines-AC"
             
-            print(f"Using {selector_type} selector: {selector}")
-            print(f"Explanation: {explanation}")
-            return
-            # Click on the Air Canada filter
-            wait = WebDriverWait(driver, 10)
-            if selector_type.lower() == 'xpath':
-                air_canada_checkbox = wait.until(EC.element_to_be_clickable((By.XPATH, selector)))
-            elif selector_type.lower() == 'css':
-                air_canada_checkbox = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
-            elif selector_type.lower() == 'id':
-                air_canada_checkbox = wait.until(EC.element_to_be_clickable((By.ID, selector)))
+            # Use JavaScript to check if element exists and is visible
+            element_exists = driver.execute_script(f"return !!document.getElementById('{checkbox_id}') && document.getElementById('{checkbox_id}').offsetParent !== null")
             
-            # Click the checkbox
-            air_canada_checkbox.click()
-            print("Successfully clicked on Air Canada filter")
-            
-            # Wait for results to update
-            time.sleep(5)
-        except Exception as e:
-            print(f"Error clicking Air Canada filter: {str(e)}")
-            # Fallback: try a more generic approach if the specific selector fails
-            try:
-                # Try multiple fallback methods
-                fallback_methods = [
-                    # Method 1: Look for checkboxes near "Air Canada" text
-                    "//span[contains(text(), 'Air Canada')]/ancestor::label//input[@type='checkbox']",
-                    # Method 2: Look for labels with Air Canada
-                    "//label[contains(., 'Air Canada')]//input",
-                    # Method 3: Look for divs with Air Canada
-                    "//div[contains(., 'Air Canada')]//input[@type='checkbox']",
-                    # Method 4: Look for any element with Air Canada text nearby an input
-                    "//*[contains(text(), 'Air Canada')]/ancestor::*[input[@type='checkbox']]//input"
-                ]
+            if element_exists:
+                # Click using JavaScript which bypasses visibility issues
+                driver.execute_script(f"document.getElementById('{checkbox_id}').click();")
+                print("Successfully clicked Air Canada checkbox using JavaScript")
+                time.sleep(20)
+                return
+            else:
+                print(f"Element with ID {checkbox_id} not found or not visible")
                 
-                for method in fallback_methods:
-                    try:
-                        elements = driver.find_elements(By.XPATH, method)
-                        if elements:
-                            driver.execute_script("arguments[0].click();", elements[0])
-                            print(f"Clicked Air Canada filter using fallback method: {method}")
-                            time.sleep(5)
-                            break
-                    except Exception:
-                        continue
-            except Exception as fallback_error:
-                print(f"All fallback methods failed: {str(fallback_error)}")
-        
-        # Get total page height after filtering
-        return
-        total_height = driver.execute_script("return document.body.scrollHeight")
-        
-        # Create output directory
-        os.makedirs('output/step3_images', exist_ok=True)
-        
-        # Screenshot parameters
-        viewport_height = 1000
-        overlap = 100
-        current_position = 0
-        section = 0
-        
-        # Take screenshots of filtered results
-        while current_position < total_height:
-            driver.execute_script(f"window.scrollTo(0, {current_position})")
-            time.sleep(2)
+            # If direct ID approach fails, try clicking the label instead
+            print("Trying to click on the Air Canada label")
+            label_xpath = "//div[contains(@class, 'hYzH-checkbox-label') and text()='Air Canada']"
+            labels = driver.find_elements(By.XPATH, label_xpath)
             
-            screenshot_path = f'output/step3_images/kayak_results_{i}_section_{section + 1}.png'
-            driver.save_screenshot(screenshot_path)
-            
-            # Enhance screenshot quality
-            img = Image.open(screenshot_path)
-            img = img.convert('RGB')
-            img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
-            img.save(screenshot_path, 'PNG', quality=100, optimize=False)
-            
-            print(f"Captured section {section + 1} at position {current_position}/{total_height}")
-            
-            current_position += (viewport_height - overlap)
-            section += 1
+            if labels:
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", labels[0])
+                time.sleep(1)
+                driver.execute_script("arguments[0].click();", labels[0])
+                print("Successfully clicked on Air Canada label")
+                time.sleep(5)
+                return
+            else:
+                print("Air Canada label not found")
+        except Exception as e:
+            print(f"Error targeting Air Canada checkbox: {str(e)}")
+    
+    # Generic approach for other filters or as fallback
+    try:
+        # Try finding by text content in the label
+        xpath = f"//div[contains(text(), '{filter_value}')]"
+        elements = driver.find_elements(By.XPATH, xpath)
         
-        driver.quit()
-        return f'output/step3_images/kayak_results_{i}_section_*.png'
+        if elements:
+            # Found the text element, now click it
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elements[0])
+            time.sleep(1)
+            driver.execute_script("arguments[0].click();", elements[0])
+            print(f"Successfully clicked on {filter_value} text element")
+            time.sleep(5)
+            return
+        else:
+            print(f"No elements found containing text '{filter_value}'")
+            
+        # Last resort: try to find any checkbox near text containing the filter value
+        xpath = f"//*[contains(text(), '{filter_value}')]/ancestor::*[.//input[@type='checkbox']]//input[@type='checkbox']"
+        checkboxes = driver.find_elements(By.XPATH, xpath)
         
+        if checkboxes:
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkboxes[0])
+            time.sleep(1)
+            driver.execute_script("arguments[0].click();", checkboxes[0])
+            print(f"Successfully clicked on checkbox near '{filter_value}'")
+            time.sleep(5)
+            return
+        else:
+            print(f"No checkboxes found near text '{filter_value}'")
+            
     except Exception as e:
-        print(f"Error crawling Kayak: {str(e)}")
-        if 'driver' in locals():
-            driver.quit()
-        return None
+        print(f"All methods failed to apply {filter_type} filter for {filter_value}: {str(e)}")
 
 
 # Apply multiple filters
 filters = {
-    'airline': 'Air Canada',
-    'stops': 'nonstop'
+    'airline': 'Air Canada'
+    # 'stops': 'nonstop'
 }
 
 

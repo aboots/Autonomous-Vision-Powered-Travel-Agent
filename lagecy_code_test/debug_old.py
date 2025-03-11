@@ -95,7 +95,7 @@ def crawl_flight_data_kayak(flight_info, i):
         driver.set_window_size(1920, 1200)
         
         # Scroll to the filters section (left sidebar)
-        driver.execute_script("window.scrollTo(0, 450)")
+        driver.execute_script("window.scrollTo(0, 550)")
         time.sleep(2)
 
         # Save the HTML content of the page
@@ -120,123 +120,125 @@ def crawl_flight_data_kayak(flight_info, i):
             soup = BeautifulSoup(f.read(), 'html.parser')
         
         # Find all elements containing exactly "Air Canada" text
-        air_canada_elements = []
+        # air_canada_elements = []
         
-        # Method 1: Find elements with exact text "Air Canada"
-        for element in soup.find_all(string=re.compile(r'^Air Canada$')):
-            parent = element.parent
-            air_canada_elements.append({
-                'element_type': parent.name,
-                'element_text': element.strip(),
-                'element_html': str(parent),
-                'element_attrs': parent.attrs
-            })
-        
-        # Method 2: Find elements with exact text "Air Canada" with possible whitespace
-        for element in soup.find_all(string=re.compile(r'^\s*Air Canada\s*$')):
-            parent = element.parent
-            air_canada_elements.append({
-                'element_type': parent.name,
-                'element_text': element.strip(),
-                'element_html': str(parent),
-                'element_attrs': parent.attrs
-            })
-        
-        # Method 3: Find input elements that have Air Canada in their label or nearby text
-        for label in soup.find_all(['label', 'div'], string=re.compile(r'Air Canada')):
-            # Look for nearby input elements (children, siblings, etc.)
-            inputs = label.find_all('input') or label.parent.find_all('input')
-            for input_elem in inputs:
-                air_canada_elements.append({
-                    'element_type': 'input',
-                    'element_text': 'Input near: ' + label.get_text().strip(),
-                    'element_html': str(input_elem),
-                    'element_attrs': input_elem.attrs
-                })
-        
-        # Method 4: Find elements with Air Canada in specific attributes
-        # for element in soup.find_all(attrs={"aria-label": re.compile(r'Air Canada', re.I)}):
+        # # Method 1: Find elements with exact text "Air Canada"
+        # for element in soup.find_all(string=re.compile(r'^Air Canada$')):
+        #     parent = element.parent
         #     air_canada_elements.append({
-        #         'element_type': element.name,
-        #         'element_text': element.get_text().strip(),
-        #         'element_html': str(element),
-        #         'element_attrs': element.attrs
+        #         'element_type': parent.name,
+        #         'element_text': element.strip(),
+        #         'element_html': str(parent),
+        #         'element_attrs': parent.attrs
         #     })
         
-        # # Method 5: Find checkbox inputs within a small distance of Air Canada text
-        # for element in soup.find_all(string=re.compile(r'Air Canada')):
+        # # Method 2: Find elements with exact text "Air Canada" with possible whitespace
+        # for element in soup.find_all(string=re.compile(r'^\s*Air Canada\s*$')):
         #     parent = element.parent
-        #     # Look up to 3 levels up for checkboxes
-        #     current = parent
-        #     for _ in range(3):
-        #         if current:
-        #             checkboxes = current.find_all('input', type='checkbox')
-        #             for checkbox in checkboxes:
-        #                 air_canada_elements.append({
-        #                     'element_type': 'checkbox',
-        #                     'element_text': 'Checkbox near: ' + element.strip(),
-        #                     'element_html': str(checkbox),
-        #                     'element_attrs': checkbox.attrs
-        #                 })
-        #             current = current.parent
+        #     air_canada_elements.append({
+        #         'element_type': parent.name,
+        #         'element_text': element.strip(),
+        #         'element_html': str(parent),
+        #         'element_attrs': parent.attrs
+        #     })
         
-        print(f"Found {len(air_canada_elements)} potential Air Canada elements")
+        # # Method 3: Find input elements that have Air Canada in their label or nearby text
+        # for label in soup.find_all(['label', 'div'], string=re.compile(r'Air Canada')):
+        #     # Look for nearby input elements (children, siblings, etc.)
+        #     inputs = label.find_all('input') or label.parent.find_all('input')
+        #     for input_elem in inputs:
+        #         air_canada_elements.append({
+        #             'element_type': 'input',
+        #             'element_text': 'Input near: ' + label.get_text().strip(),
+        #             'element_html': str(input_elem),
+        #             'element_attrs': input_elem.attrs
+        #         })
         
-        # Create system and user prompts for GPT-4o with both HTML elements and screenshot
-        system_prompt = """
-        You are an expert in web automation. Analyze both the screenshot of a Kayak flight search page 
-        and the HTML elements I've extracted that contain "Air Canada" references.
+        # # Method 4: Find elements with Air Canada in specific attributes
+        # # for element in soup.find_all(attrs={"aria-label": re.compile(r'Air Canada', re.I)}):
+        # #     air_canada_elements.append({
+        # #         'element_type': element.name,
+        # #         'element_text': element.get_text().strip(),
+        # #         'element_html': str(element),
+        # #         'element_attrs': element.attrs
+        # #     })
         
-        Your task is to identify the most reliable selector that can be used with Selenium to click 
-        on the Air Canada checkbox in the airlines filter section.
+        # # # Method 5: Find checkbox inputs within a small distance of Air Canada text
+        # # for element in soup.find_all(string=re.compile(r'Air Canada')):
+        # #     parent = element.parent
+        # #     # Look up to 3 levels up for checkboxes
+        # #     current = parent
+        # #     for _ in range(3):
+        # #         if current:
+        # #             checkboxes = current.find_all('input', type='checkbox')
+        # #             for checkbox in checkboxes:
+        # #                 air_canada_elements.append({
+        # #                     'element_type': 'checkbox',
+        # #                     'element_text': 'Checkbox near: ' + element.strip(),
+        # #                     'element_html': str(checkbox),
+        # #                     'element_attrs': checkbox.attrs
+        # #                 })
+        # #             current = current.parent
         
-        Examine both the visual information from the screenshot and the HTML structure from the extracted elements.
-        Return ONLY the most reliable selector as a JSON object with these keys:
-        - 'selector_type': either 'xpath', 'css', or 'id'
-        - 'selector': the actual selector string
-        - 'explanation': brief explanation of why this is the best selector
-        """
+        # print(f"Found {len(air_canada_elements)} potential Air Canada elements")
         
-        # Format the HTML elements for the prompt
-        html_elements_text = "Extracted HTML elements containing 'Air Canada':\n\n"
-        for i, elem in enumerate(air_canada_elements, 1):
-            html_elements_text += f"Element {i}:\n"
-            html_elements_text += f"Type: {elem['element_type']}\n"
-            html_elements_text += f"Text: {elem['element_text']}\n"
-            html_elements_text += f"Attributes: {elem['element_attrs']}\n"
-            html_elements_text += f"HTML: {elem['element_html'][:200]}...\n\n"
+        # # Create system and user prompts for GPT-4o with both HTML elements and screenshot
+        # system_prompt = """
+        # You are an expert in web automation. Analyze both the screenshot of a Kayak flight search page 
+        # and the HTML elements I've extracted that contain "Air Canada" references.
         
-        user_prompt = f"""
-        Find the Air Canada filter checkbox in the Kayak flight search page.
+        # Your task is to identify the most reliable selector that can be used with Selenium to click 
+        # on the Air Canada checkbox in the airlines filter section.
         
-        Here are HTML elements containing 'Air Canada' references:
+        # Examine both the visual information from the screenshot and the HTML structure from the extracted elements.
+        # Return ONLY the most reliable selector as a JSON object with these keys:
+        # - 'selector_type': either 'xpath', 'css', or 'id'
+        # - 'selector': the actual selector string
+        # - 'explanation': brief explanation of why this is the best selector
+        # """
         
-        {html_elements_text}
+        # # Format the HTML elements for the prompt
+        # html_elements_text = "Extracted HTML elements containing 'Air Canada':\n\n"
+        # for i, elem in enumerate(air_canada_elements, 1):
+        #     html_elements_text += f"Element {i}:\n"
+        #     html_elements_text += f"Type: {elem['element_type']}\n"
+        #     html_elements_text += f"Text: {elem['element_text']}\n"
+        #     html_elements_text += f"Attributes: {elem['element_attrs']}\n"
+        #     html_elements_text += f"HTML: {elem['element_html'][:200]}...\n\n"
         
-        The screenshot shows the filters section of the page. Please analyze both the HTML elements and the screenshot 
-        to provide the most reliable selector for clicking the Air Canada checkbox.
-        """
+        # user_prompt = f"""
+        # Find the Air Canada filter checkbox in the Kayak flight search page.
         
-        gpt_response = openai_req_generator(
-            system_prompt, 
-            user_prompt, 
-            files=[filters_screenshot_path], 
-            json_output=True, 
-            model_name="gpt-4o"
-        )
+        # Here are HTML elements containing 'Air Canada' references:
+        
+        # {html_elements_text}
+        
+        # The screenshot shows the filters section of the page. Please analyze both the HTML elements and the screenshot 
+        # to provide the most reliable selector for clicking the Air Canada checkbox.
+        # """
+        
+        # gpt_response = openai_req_generator(
+        #     system_prompt, 
+        #     user_prompt, 
+        #     files=[filters_screenshot_path], 
+        #     json_output=True, 
+        #     model_name="gpt-4o"
+        # )
 
-        gpt_response = json.loads(gpt_response)
-        print(gpt_response)
+        # gpt_response = json.loads(gpt_response)
+        # print(gpt_response)
         
         # Extract selector information
         try:
-            selector_type = gpt_response.get('selector_type', 'xpath')
-            selector = gpt_response.get('selector', '')
-            explanation = gpt_response.get('explanation', '')
+            # selector_type = gpt_response.get('selector_type', 'xpath')
+            # selector = gpt_response.get('selector', '')
+            # explanation = gpt_response.get('explanation', '')
+            selector_type = 'id'
+            selector = 'valueSetFilter-vertical-airlines-AC'
+            # explanation = gpt_response.get('explanation', '')
             
             print(f"Using {selector_type} selector: {selector}")
-            print(f"Explanation: {explanation}")
-            return
+            # print(f"Explanation: {explanation}")
             # Click on the Air Canada filter
             wait = WebDriverWait(driver, 10)
             if selector_type.lower() == 'xpath':
@@ -252,6 +254,7 @@ def crawl_flight_data_kayak(flight_info, i):
             
             # Wait for results to update
             time.sleep(5)
+            return
         except Exception as e:
             print(f"Error clicking Air Canada filter: {str(e)}")
             # Fallback: try a more generic approach if the specific selector fails
