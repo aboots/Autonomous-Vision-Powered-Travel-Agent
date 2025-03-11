@@ -282,7 +282,7 @@ def apply_filter(driver, filter_type, filter_value, html_file_path, screenshot_p
     # explanation = gpt_response.get('explanation', '')
 
     selector_type = 'id'
-    selector = 'valueSetFilter-vertical-airlines-AC'
+    selector = 'valueSetFilter-vertical-airlines-AC-label'
 
     print(f"Using {selector_type} selector: {selector}")
     # print(f"Explanation: {explanation}")
@@ -290,19 +290,11 @@ def apply_filter(driver, filter_type, filter_value, html_file_path, screenshot_p
     # Click on the filter
     wait = WebDriverWait(driver, 40)  # Increase timeout to 10 seconds
     try:
-    #     if selector_type.lower() == 'xpath':
-    #         filter_element = wait.until(EC.element_to_be_clickable((By.XPATH, selector)))
-    #     elif selector_type.lower() == 'css':
-    #         filter_element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
-    #     elif selector_type.lower() == 'id':
-    #         filter_element = wait.until(EC.element((By.ID, selector)))
-        
-        # print(filter_element)
-        # Try JavaScript click if regular click fails
-        # filter_element.click()
+        # Check if the label element exists and is visible
         element_exists = driver.execute_script(f"return !!document.getElementById('{selector}') && document.getElementById('{selector}').offsetParent !== null")
+        # Click on the label instead of the checkbox
         driver.execute_script(f"document.getElementById('{selector}').click();")
-        print(f"Successfully clicked on {filter_type} filter for {filter_value}")
+        print(f"Successfully clicked on label for {filter_type} filter: {filter_value}")
     except TimeoutException:
         print(f"Timeout finding element with selector {selector_type}: {selector}")
         # Implement fallback methods that were previously commented out
@@ -359,8 +351,8 @@ def apply_filter(driver, filter_type, filter_value, html_file_path, screenshot_p
 
 # Apply multiple filters
 filters = {
-    # 'airline': 'Air Canada'
-    'stops': 'nonstop'
+    'airline': 'Air Canada'
+    # 'stops': 'nonstop'
 }
 
 
