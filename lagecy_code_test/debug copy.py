@@ -323,11 +323,4 @@ def crawl_flight_data_kayak(flight_info, i):
         return None
 
 
-# Apply multiple filters
-filters = {
-    'airline': 'Air Canada',
-    'stops': 'nonstop'
-}
-
-
-crawl_flight_data_kayak(search, i, filters)
+crawl_flight_data_kayak(search, i)
